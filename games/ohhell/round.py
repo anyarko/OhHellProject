@@ -8,7 +8,7 @@ class OhHellRound:
     ''' Round can call other Classes' functions to keep the game running
     '''
     
-    def __init__(self, round_number, num_players, np_random, dealer, trump_card, last_winner=0):
+    def __init__(self, round_number, num_players, np_random, dealer, last_winner=0):
         ''' Initilize the round class
 
         Args:
@@ -20,13 +20,22 @@ class OhHellRound:
         self.np_random = np_random
         self.dealer = dealer
         self.played_cards = []
-        self.trump_card = trump_card
+        self.trump_card = None
         self.round_number = round_number
         self.num_players = num_players
         self.last_winner = last_winner
         self.current_player = 0
+        self.proposed_tricks = [0 for _ in range(self.num_players)]
 
-    
+    def flip_trump_card(self):
+        ''' Flip trump card when a new game starts
+
+        Setter:
+            (object): The card to be used as the trump card 
+        '''
+        trump_card = self.deck.pop()
+        self.trump_card = trump_card
+
     def start_new_round(self, players):
         ''' Propose tricks for each player
 
@@ -34,10 +43,11 @@ class OhHellRound:
             players (list): The players playing the game
 
         '''
-        self.trump_card = self.dealer.deal_card()
+        flip_trump_card()
 
-        for player in players:
+        for i, player in enumerate(players):
             player.in_tricks = np.random.randint(self.round_number/2)
+            self.proposed_tricks[i] = player.in_tricks 
 
 
     def proceed_round(self, players, action):
@@ -74,23 +84,12 @@ class OhHellRound:
                 return full_list
 
 
-    def get_state(self, players, player_id):
-        ''' Get player's state
+    def is_over(self):
+        ''' Check whether the round is over
 
-        Args:
-            players (list): The list of OhHellPlayer
-            player_id (int): The id of the player
+        Returns:
+            (boolean): True if the current round is over
         '''
-        state = {}
-        player = players[player_id]
-        state['hand'] = player.hand
-        state['played_cards'] = self.played_cards
-        state['legal_actions'] = self.get_legal_actions(players, player_id)
-        state['players_left'] = self.num_players - len(self.played_cards)
-        state['in_tricks'] = players[player_id].in_tricks
-        state['trump_card'] = self.trump_card
-        return state
-
-
-
-
+        if len(self.played_cards) == self.num_players:
+            return True
+        return False

@@ -14,22 +14,14 @@ class OhHellDealer:
         '''
         self.np_random.shuffle(self.deck)
 
-    def deal_card(self):
-        ''' Deal one card from the deck
+    def flip_trump_card(self):
+        ''' Flip trump card when a new game starts
 
         Returns:
-            (Card): The drawn card from the deck
+            (object): The card to be used as the trump card 
         '''
-        return self.deck.pop()
-
-    def flip_top_card(self):
-        ''' Flip top card when a new game starts
-
-        Returns:
-            (object): The object of UnoCard at the top of the deck
-        '''
-        top_card = self.deck.pop()
-        return top_card
+        trump_card = self.deck.pop()
+        return trump_card
 
     def deal_cards(self, player, num):
         ''' Deal some cards from deck to one player
