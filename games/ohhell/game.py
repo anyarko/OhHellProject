@@ -43,8 +43,11 @@ class OhHellGame:
         self.judger = Judger(self.np_random)
 
         # Deal cards to each player to prepare for the round
-        for player in self.players:
-            self.dealer.deal_cards(player, 10)
+        for i in range(10 * self.num_players):
+            self.players[i % self.num_players].hand.append(self.dealer.deal_card())
+
+
+        self.trump_card = self.dealer.flip_trump_card()
 
         # Initilize public cards
         self.played_cards = []
@@ -53,9 +56,8 @@ class OhHellGame:
                            dealer= self.dealer,
                            num_players= self.num_players,
                            round_number= 10,
-                           last_winner= self.last_winner)
+                           last_winner= 0)
 
-        self.round.start_new_round(self.players)
 
         self.history = []
 
@@ -64,7 +66,7 @@ class OhHellGame:
         # Save history of tricks won
         self.tricks_won = [0 for _ in range(self.num_players)]
 
-        return state
+        return state, 
 
 
 

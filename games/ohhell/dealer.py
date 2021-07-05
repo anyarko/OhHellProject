@@ -32,3 +32,12 @@ class OhHellDealer:
         '''
         for _ in range(num):
             player.hand.append(self.deck.pop())
+
+    
+    def deal_card(self):
+        ''' Deal one card from the deck
+
+        Returns:
+            (Card): The drawn card from the deck
+        '''
+        return self.deck.pop()

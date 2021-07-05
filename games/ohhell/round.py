@@ -27,28 +27,6 @@ class OhHellRound:
         self.current_player = 0
         self.proposed_tricks = [0 for _ in range(self.num_players)]
 
-    def flip_trump_card(self):
-        ''' Flip trump card when a new game starts
-
-        Setter:
-            (object): The card to be used as the trump card 
-        '''
-        trump_card = self.deck.pop()
-        self.trump_card = trump_card
-
-    def start_new_round(self, players):
-        ''' Propose tricks for each player
-
-        Args:
-            players (list): The players playing the game
-
-        '''
-        flip_trump_card()
-
-        for i, player in enumerate(players):
-            player.in_tricks = np.random.randint(self.round_number/2)
-            self.proposed_tricks[i] = player.in_tricks 
-
 
     def proceed_round(self, players, action):
         ''' Call other Classes's functions to keep one round running
@@ -70,6 +48,9 @@ class OhHellRound:
     def get_legal_actions(self, players, player_id):
         ''' Returns the list of actions possible for the player
         '''
+        if players[player_id].has_proposed == False:
+            players[player_id].has_proposed = True
+            return list(range(1, self.round_number+1))
 
         full_list = players[player_id].hand
 
