@@ -1,0 +1,4 @@
+langauge: python
+env:
+ - 3.8.10
+ - numpy 
