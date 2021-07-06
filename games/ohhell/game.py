@@ -15,6 +15,7 @@ class OhHellGame:
         self.np_random = np.random.RandomState()
         self.num_players = num_players
         self.payoffs = [0 for _ in range(num_players)]
+        self.current_player = self.np_random.randint(0, self.num_players)
 
 
     def configure(self, game_config):
@@ -25,7 +26,7 @@ class OhHellGame:
     def init_game(self):
         ''' Initialilze the game of Oh Hell
 
-        This version supports three-player OhHell
+        This version supports up to four-player OhHell
 
         Returns:
             (tuple): Tuple containing:
@@ -56,27 +57,63 @@ class OhHellGame:
                            dealer= self.dealer,
                            num_players= self.num_players,
                            round_number= 10,
-                           last_winner= 0)
+                           last_winner= 0,
+                           current_player= self.current_player)
 
+        # Count the round. There are 11 rounds in each game.
+        self.round_counter = 0
 
         self.history = []
 
-        state = self.get_state(self.players, self.player_id)
 
-        # Save history of tricks won
-        self.tricks_won = [0 for _ in range(self.num_players)]
+        # Save history of players that won
+        self.history_winners = [0 for _ in range(10)]
 
-        return state, 
-
-
-
+        player_id = self.round.current_player
+        state = self.get_state(self.players, player_id)
+        return state, player_id
 
 
 
+    def step(self, action):
+        ''' Get the next state
+
+        Args:
+            action (str): A specific action
+
+        Returns:
+            (tuple): Tuple containing:
+
+                (dict): next player's state
+                (int): next plater's id
+        '''
+
+        if self.allow_step_back:
+            # First snapshot the current state
+            r = deepcopy(self.round)
+            b = self.round.current_player
+            r_c = self.round_counter
+            d = deepcopy(self.dealer)
+            p = deepcopy(self.played_cards)
+            ps = deepcopy(self.players)
+            tw = copy(self.history_winners)
+            self.history.append((r, b, r_c, d, p, ps, tw))
+
+        # Then we proceed to the next round
+        self.current_player = self.round.proceed_round(self.players, action)
+
+        # If a round is over, we refresh the played cards
+        if self.round.is_over():
+            self.played_cards = []
+            self.round_counter += 1
+            self.current_player = self.round.proceed_round(self.players, action)
+
+        state = self.get_state(self.current_player)
+
+        return state, self.current_player
 
 
-
-    def get_state(self, player):
+    def get_state(self, player_id):
         ''' Return player's state
 
         Args:
@@ -85,14 +122,40 @@ class OhHellGame:
         Returns:
             (dict): The state of the player
         '''
-        proposed_tricks = [self.players[i].in_tricks for i in range(self.num_players)]
 
-        legal_actions = self.get_legal_actions()
-        state = self.players[player].get_state(self.played_cards, proposed_tricks, legal_actions)
-        state['tricks_won'] = self.tricks_won
+        state = self.round.get_state(self.players, player_id)
         state['current_player'] = self.round.current_player
-
         return state
 
+    
+    def step_back(self):
+        ''' Return to the previous state of the game
 
-        
+        Returns:
+            (bool): True if the game steps back successfully
+        '''
+        if len(self.history) > 0:
+            self.round, self.current_player, self.round_counter, self.dealer, self.played_cards, self.players, self.history_winners = self.history.pop()
+            return True
+        return False
+    
+    def get_player_id(self):
+        ''' Return the current player's id
+
+        Returns:
+            (int): current player's id
+        '''
+        return self.current_player
+
+    
+    def is_over(self):
+        ''' Check if the game is over
+
+        Returns:
+            (boolean): True if the game is over
+        '''
+
+        # If all rounds are finshed
+        if self.round_counter >= 11:
+            return True
+        return False

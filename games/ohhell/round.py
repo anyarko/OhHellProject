@@ -8,7 +8,7 @@ class OhHellRound:
     ''' Round can call other Classes' functions to keep the game running
     '''
     
-    def __init__(self, round_number, num_players, np_random, dealer, last_winner=0):
+    def __init__(self, round_number, num_players, np_random, dealer, last_winner=0, current_player=0):
         ''' Initilize the round class
 
         Args:
@@ -24,7 +24,7 @@ class OhHellRound:
         self.round_number = round_number
         self.num_players = num_players
         self.last_winner = last_winner
-        self.current_player = 0
+        self.current_player = current_player
         self.proposed_tricks = [0 for _ in range(self.num_players)]
 
 
@@ -38,10 +38,15 @@ class OhHellRound:
         if action not in self.get_legal_actions():
             raise Exception('{} is not legal action. Legal actions: {}'.format(action, self.get_legal_actions()))
         
-        self.played_cards = players[self.current_player].hand.pop(action)
+        if isinstance(action, int):
+            players[self.current_player].proposed_tricks = action
+            self.proposed_tricks[self.current_player] = action
+        else:
+            self.played_cards.append(players[self.current_player].hand.pop(action))
 
         self.current_player = (self.current_player + 1) % self.num_players 
 
+        return self.current_player
 
     
     
@@ -64,6 +69,24 @@ class OhHellRound:
             else:
                 return full_list
 
+    def get_state(self, players, player_id):
+        ''' Encode the state for the player
+
+        Args:
+            players (list): A list of the players
+            player_id (int): The id of the player
+
+        Returns:
+            (dict): The state of the player
+        '''
+        state = {}
+        state['hand'] = [c.get_index() for c in players[player_id].hand]
+        state['played_cards'] = [c.get_index() for c in self.played_cards]
+        state['proposed_tricks'] = players[player_id].proposed_tricks
+        state['tricks_won'] = self.tricks_won
+        state['legal_actions'] = self.get_legal_actions(players, player_id)
+        state['trump_card'] = self.trump_card
+        return state
 
     def is_over(self):
         ''' Check whether the round is over

@@ -2,7 +2,7 @@ from rlcard.games.ohhell.utils import determine_winner
 import numpy as np
 
 class OhHellJudger:
-    ''' The Judger class for Texas Hold'em
+    ''' The Judger class for Oh Hell!
     '''
     def __init__(self, np_random):
         ''' Initialize a judger class
