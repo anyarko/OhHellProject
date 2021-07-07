@@ -3,8 +3,19 @@ import json
 import numpy as np
 from collections import OrderedDict
 
+import rlcard
 
 from rlcard.utils.utils import rank2int
+
+
+# Read required docs
+ROOT_PATH = rlcard.__path__[0]
+
+# a map of abstract action to its index and a list of abstract action
+with open(os.path.join(ROOT_PATH, 'games/uno/jsondata/action_space.json'), 'r') as file:
+    ACTION_SPACE = json.load(file, object_pairs_hook=OrderedDict)
+    ACTION_LIST = list(ACTION_SPACE.keys())
+
 
 class Hand:
     def __init__(self, cards_left):
@@ -49,7 +60,17 @@ def determine_winner(played_cards, trump_card):
         return played_cards.index(first_suit + highest)
         
         
+def cards2list(cards):
+    ''' Get the corresponding string representation of cards
 
+    Args:
+        cards (list): list of UnoCards objects
 
-
+    Returns:
+        (string): string representation of cards
+    '''
+    cards_list = []
+    for card in cards:
+        cards_list.append(card.get_str())
+    return cards_list
 

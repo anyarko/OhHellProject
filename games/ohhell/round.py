@@ -56,9 +56,11 @@ class OhHellRound:
         '''
         if players[player_id].has_proposed == False:
             players[player_id].has_proposed = True
-            return list(range(1, self.round_number+1))
+            return [str(i) for i in list(range(0, self.round_number+1))]
 
         full_list = players[player_id].hand
+
+        full_list = [i.get_index() for i in full_list]
 
         if player_id == self.last_winner:
             return full_list
