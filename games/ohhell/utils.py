@@ -41,7 +41,7 @@ def determine_winner(played_cards, trump_card):
     trump_cards_played = [rank2int(k) for v,k in played_cards if trump_suit == v]
     same_as_first_suit = [rank2int(k) for v,k in played_cards if first_suit == v]
 
-    if not trump_cards_played:
+    if trump_cards_played:
         highest = max(trump_cards_played)
         return played_cards.index(trump_suit + highest)
     else:

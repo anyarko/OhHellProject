@@ -1,5 +1,4 @@
 from rlcard.games.ohhell.utils import determine_winner
-import numpy as np
 
 class OhHellJudger:
     ''' The Judger class for Oh Hell!
@@ -9,16 +8,32 @@ class OhHellJudger:
         '''
         self.np_random = np_random
 
-    def judge_game(self, players, played_cards, order):
+    def judge_round(self, played_cards, trump_card):
         ''' Return the winner of the game
 
         Args:
             players (list): The list of players who play the game
             played_cards (list): The list of cards played
-            order (list): The id's of the players in the order they played
-            hands (list): The list of hands that from the players
+            trump_card (card): The trump card for the game
         '''
 
         winner = determine_winner(played_cards, trump_card)
 
-        return order[winner]
+        return winner
+
+
+
+    def judge_game(self, players):
+        ''' Return the winner of the game
+
+        Args:
+            players (list): The list of players who play the game
+        '''
+
+        for player in players:
+            if player.tricks_won == player.proposed_tricks:
+                players.tricks_won += 10
+
+        final_scores = [player.tricks_won for player in players]
+
+        return final_scores

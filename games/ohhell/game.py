@@ -57,7 +57,7 @@ class OhHellGame:
                            dealer= self.dealer,
                            num_players= self.num_players,
                            round_number= 10,
-                           last_winner= 0,
+                           last_winner= self.current_player,
                            current_player= self.current_player)
 
         # Count the round. There are 11 rounds in each game.
@@ -104,6 +104,9 @@ class OhHellGame:
 
         # If a round is over, we refresh the played cards
         if self.round.is_over():
+            self.last_winner = (self.round.last_winner + self.judger.judge_round(self.played_cards, self.trump_card)) % self.num_players
+            self.current_player = (self.round.last_winner + self.judger.judge_round(self.played_cards, self.trump_card)) % self.num_players
+            self.round.current_player = self.current_player
             self.played_cards = []
             self.round_counter += 1
             self.current_player = self.round.proceed_round(self.players, action)
@@ -148,6 +151,15 @@ class OhHellGame:
         return self.current_player
 
     
+    def get_num_players(self):
+        ''' Return the number of players in Oh Hell
+
+        Returns:
+            (int): The number of players in the game
+        '''
+        return self.num_players
+
+    
     def is_over(self):
         ''' Check if the game is over
 
@@ -159,3 +171,37 @@ class OhHellGame:
         if self.round_counter >= 11:
             return True
         return False
+
+    def get_payoffs(self):
+        ''' Return the scores of the players
+
+        Returns:
+            (list): The final scores of the players
+        '''
+        return self.judger.judge_game(self.players)
+    
+
+    def get_legal_actions(self):
+        ''' Return the legal actions for current player
+
+        Returns:
+            (list): A list of legal actions
+        '''
+        return self.round.get_legal_actions(self.players, self.round.current_player)
+
+    @staticmethod
+    def get_num_actions():
+        ''' Return the number of applicable actions
+
+        Returns:
+            (int): The number of actions. There are at most 62 possible actions.
+        '''
+        return 62
+
+    def get_player_id(self):
+        ''' Return the current player's id
+
+        Returns:
+            (int): current player's id
+        '''
+        return self.round.current_player

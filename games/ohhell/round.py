@@ -3,6 +3,7 @@
 '''
 
 import numpy as np
+from rlcard.games.base import Card
 
 class OhHellRound:
     ''' Round can call other Classes' functions to keep the game running
@@ -32,7 +33,7 @@ class OhHellRound:
         ''' Call other Classes's functions to keep one round running
 
         Args:
-            action (str): The action(card) choosen by the player
+            action (str/int): The action(card) or bid choosen by the player
         '''
 
         if action not in self.get_legal_actions():
@@ -64,7 +65,7 @@ class OhHellRound:
         else:
             starting_suit = self.played_cards[0][0]
             hand_same_as_starter = [card for card in players[player_id].hand if starting_suit in card]
-            if not hand_same_as_starter:
+            if hand_same_as_starter:
                 return hand_same_as_starter
             else:
                 return full_list
@@ -83,7 +84,7 @@ class OhHellRound:
         state['hand'] = [c.get_index() for c in players[player_id].hand]
         state['played_cards'] = [c.get_index() for c in self.played_cards]
         state['proposed_tricks'] = players[player_id].proposed_tricks
-        state['tricks_won'] = self.tricks_won
+        state['tricks_won'] = players[player_id].tricks_won
         state['legal_actions'] = self.get_legal_actions(players, player_id)
         state['trump_card'] = self.trump_card
         return state
