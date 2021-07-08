@@ -12,7 +12,7 @@ from rlcard.utils.utils import rank2int
 ROOT_PATH = rlcard.__path__[0]
 
 # a map of abstract action to its index and a list of abstract action
-with open(os.path.join(ROOT_PATH, 'games/uno/jsondata/action_space.json'), 'r') as file:
+with open(os.path.join(ROOT_PATH, 'games/ohhell/jsondata/action_space.json'), 'r') as file:
     ACTION_SPACE = json.load(file, object_pairs_hook=OrderedDict)
     ACTION_LIST = list(ACTION_SPACE.keys())
 
