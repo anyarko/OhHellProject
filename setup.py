@@ -21,12 +21,12 @@ VERSION = _get_version()
 setuptools.setup(
     name="rlcard",
     version=VERSION,
-    author="Data Analytics at Texas A&M (DATA) Lab",
-    author_email="daochen.zha@tamu.edu",
+    author="Team Warwick",
+    author_email="albert.nyarko-agyei@warwick.ac.uk",
     description="A Toolkit for Reinforcement Learning in Card Games",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/datamllab/rlcard",
+    url="https://github.com/LeLingu/OhHellProject/rlcard",
     keywords=["Reinforcement Learning", "game", "RL", "AI"],
     packages=setuptools.find_packages(exclude=('tests',)),
     package_data={
@@ -36,6 +36,8 @@ setuptools.setup(
                    'games/leducholdem/card2index.json',
                    'games/doudizhu/jsondata.zip',
                    'games/uno/jsondata/*',
+                   'games/ohhell/jsondata/*',
+                   'games/ohhell/card2index.json'
                    ]},
     install_requires=[
         'numpy>=1.16.3',
