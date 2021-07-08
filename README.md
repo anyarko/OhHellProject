@@ -1,5 +1,3 @@
-﻿## OhHellProject
+# Reinforcement Learning Project on OhHell
 
-# First stage of Project 
-
-Coding the actual OhHELL game. This is so that agent will know the rules. Templates of similar card games are in the games folder to help.
+Modifying the code from a project by DATA Lab at Texas A&M University (2019) that created the environment and agents for the RL approach to some card games.  
