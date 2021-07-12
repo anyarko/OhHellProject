@@ -94,16 +94,10 @@ def int2rank(number):
         rank(str): rank stored in Card object
 
     Note:
-        1. If the input rank is 0, the function will return an empty string.
-        2. If the input rank is not valid, the function will return None.
+        1. If the input rank is not valid, the function will return None.
     '''
-    if number == '':
-        return ""
-    elif rank.isdigit():
-        if int(number) >= 2 and int(number) <= 10:
-            return str(number)
-        else:
-            return None
+    if number >= 2 and number < 10:
+        return str(number)
     elif number == 14:
         return "A"
     elif number == 10:

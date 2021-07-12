@@ -5,6 +5,7 @@ from rlcard.games.ohhell.game import OhHellGame as Game
 from rlcard.games.ohhell.player import OhHellPlayer as Player
 from rlcard.games.ohhell.judger import OhHellJudger as Judger
 from rlcard.games.ohhell.utils import ACTION_LIST, determine_winner, int2rank
+from rlcard.games.base import Card
 
 class TestOhHellMethods(unittest.TestCase):
 
@@ -65,10 +66,10 @@ class TestOhHellMethods(unittest.TestCase):
         self.assertEqual(success, False)  
 
     def test_determine_winner(self):
-        trump_card = 'D10' 
-        played_cards = ['DA', 'S2', 'D3', 'H4']
+        trump_card = Card('D', 'T')
+        played_cards = [Card('D','A'), Card('S','2'), Card('D','3'), Card('H','4')]
         winner = determine_winner(played_cards, trump_card)
-        self.assertEqual(winnner, 0)
+        self.assertEqual(winner, 0)
 
     def test_player_get_player_id(self):
         player = Player(0, np.random.RandomState())

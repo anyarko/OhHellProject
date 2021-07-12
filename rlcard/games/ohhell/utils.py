@@ -6,7 +6,7 @@ from collections import OrderedDict
 import rlcard
 
 from rlcard.utils.utils import rank2int, int2rank
-
+from rlcard.games.base import Card
 
 # Read required docs
 ROOT_PATH = rlcard.__path__[0]
@@ -41,25 +41,24 @@ def determine_winner(played_cards, trump_card):
     '''
     Return the index of the player that wins in that round
 
-    trump_card (list): A list of just one card 
+    trump_card (Card): A list of just one card 
     played_cards (list): A list of cards played in the round so far
     '''
 
-
-    trump_suit = trump_card[0][0]
-    first_suit = played_cards[0][0]
+    trump_suit = trump_card.suit
+    first_suit = played_cards[0].suit
     
-    trump_cards_played = [rank2int(k) for v,k in played_cards if trump_suit == v]
-    same_as_first_suit = [rank2int(k) for v,k in played_cards if first_suit == v]
+    trump_cards_played = [rank2int(card.rank) for card in played_cards if trump_suit == card.suit]
+    same_as_first_suit = [rank2int(card.rank) for card in played_cards if first_suit == card.suit]
 
     if trump_cards_played:
         highest = max(trump_cards_played)
         highest = int2rank(highest)
-        return played_cards.index(trump_suit + highest)
+        return played_cards.index(Card(trump_suit, highest))
     else:
         highest = max(same_as_first_suit)
         highest = int2rank(highest)
-        return played_cards.index(first_suit + highest)
+        return played_cards.index(Card(first_suit, highest))
         
         
 def cards2list(cards):

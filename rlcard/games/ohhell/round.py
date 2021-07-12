@@ -36,13 +36,15 @@ class OhHellRound:
             action (str/int): The action(card) or bid choosen by the player
         '''
 
-        if action not in self.get_legal_actions():
-            raise Exception('{} is not legal action. Legal actions: {}'.format(action, self.get_legal_actions()))
+        legal_actions = self.get_legal_actions(players, self.current_player)
+        if action not in legal_actions:
+            raise Exception('{} is not legal action. Legal actions: {}'.format(action, legal_actions))
         
         if isinstance(action, int):
             players[self.current_player].proposed_tricks = action
             self.proposed_tricks[self.current_player] = action
         else:
+            action = str(action)
             self.played_cards.append(players[self.current_player].hand.pop(action))
 
         self.current_player = (self.current_player + 1) % self.num_players 
@@ -56,17 +58,15 @@ class OhHellRound:
         '''
         if players[player_id].has_proposed == False:
             players[player_id].has_proposed = True
-            return [str(i) for i in list(range(0, self.round_number+1))]
+            return list(range(0, self.round_number+1))
 
         full_list = players[player_id].hand
-
-        full_list = [i.get_index() for i in full_list]
 
         if player_id == self.last_winner:
             return full_list
         else:
-            starting_suit = self.played_cards[0][0]
-            hand_same_as_starter = [card for card in players[player_id].hand if starting_suit in card]
+            starting_suit = self.played_cards[0].suit
+            hand_same_as_starter = [card for card in players[player_id].hand if starting_suit == card.suit ]
             if hand_same_as_starter:
                 return hand_same_as_starter
             else:
