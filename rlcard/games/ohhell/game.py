@@ -105,8 +105,9 @@ class OhHellGame:
         # If a round is over, we refresh the played cards
         if self.round.is_over():
             self.last_winner = (self.round.last_winner + self.judger.judge_round(self.played_cards, self.trump_card)) % self.num_players
-            self.current_player = (self.round.last_winner + self.judger.judge_round(self.played_cards, self.trump_card)) % self.num_players
-            self.round.current_player = self.current_player
+            self.current_player = self.last_winner
+            self.round.current_player = self.last_winner
+            self.players[last_winner].tricks_won += 1
             self.played_cards = []
             self.round_counter += 1
             self.current_player = self.round.proceed_round(self.players, action)
@@ -205,3 +206,11 @@ class OhHellGame:
             (int): current player's id
         '''
         return self.round.current_player
+
+    def is_over(self):
+        ''' Check if the game is over
+
+        Returns:
+            (boolean): True if the game is over
+        '''
+        return self.round_counter == 11

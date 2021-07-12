@@ -5,7 +5,7 @@ from collections import OrderedDict
 
 import rlcard
 
-from rlcard.utils.utils import rank2int
+from rlcard.utils.utils import rank2int, int2rank
 
 
 # Read required docs
@@ -54,9 +54,11 @@ def determine_winner(played_cards, trump_card):
 
     if trump_cards_played:
         highest = max(trump_cards_played)
+        highest = int2rank(highest)
         return played_cards.index(trump_suit + highest)
     else:
         highest = max(same_as_first_suit)
+        highest = int2rank(highest)
         return played_cards.index(first_suit + highest)
         
         
