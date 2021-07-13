@@ -34,7 +34,9 @@ class TestOhHellMethods(unittest.TestCase):
         game.step(1)
         game.step(1)
         proposed_tricks = game.round.proposed_tricks
-        self.assertEqual(init_tricks+1, proposed_tricks)
+        init_tricks += 1
+        init_tricks = list(init_tricks)
+        self.assertEqual(init_tricks, proposed_tricks)
         action = np.random.choice(game.get_legal_actions())
         state, next_player_id = game.step(action)
         current = game.round.current_player

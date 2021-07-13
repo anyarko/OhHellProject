@@ -43,9 +43,10 @@ class OhHellRound:
         if isinstance(action, int):
             players[self.current_player].proposed_tricks = action
             self.proposed_tricks[self.current_player] = action
+            players[self.current_player].has_proposed = True
         else:
-            action = str(action)
-            self.played_cards.append(players[self.current_player].hand.pop(action))
+            self.played_cards.append(action)
+            players[self.current_player].hand.remove(action)
 
         self.current_player = (self.current_player + 1) % self.num_players 
 
@@ -57,7 +58,6 @@ class OhHellRound:
         ''' Returns the list of actions possible for the player
         '''
         if players[player_id].has_proposed == False:
-            players[player_id].has_proposed = True
             return list(range(0, self.round_number+1))
 
         full_list = players[player_id].hand
@@ -66,7 +66,7 @@ class OhHellRound:
             return full_list
         else:
             starting_suit = self.played_cards[0].suit
-            hand_same_as_starter = [card for card in players[player_id].hand if starting_suit == card.suit ]
+            hand_same_as_starter = [card for card in full_list if starting_suit == card.suit ]
             if hand_same_as_starter:
                 return hand_same_as_starter
             else:

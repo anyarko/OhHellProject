@@ -15,7 +15,7 @@ class OhHellGame:
         self.np_random = np.random.RandomState()
         self.num_players = num_players
         self.payoffs = [0 for _ in range(num_players)]
-        self.current_player = self.np_random.randint(0, self.num_players)
+        self.current_player = 0
 
 
     def configure(self, game_config):
