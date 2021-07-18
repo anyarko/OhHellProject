@@ -32,7 +32,7 @@ class OhHellJudger:
 
         for player in players:
             if player.tricks_won == player.proposed_tricks:
-                players.tricks_won += 10
+                player.tricks_won += 10
 
         final_scores = [player.tricks_won for player in players]
 

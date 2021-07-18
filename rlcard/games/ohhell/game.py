@@ -6,6 +6,7 @@ from rlcard.games.ohhell import Player
 from rlcard.games.ohhell import Judger
 from rlcard.games.ohhell import Round
 
+
 class OhHellGame:
 
     def __init__(self, allow_step_back=False, num_players=4):
@@ -60,14 +61,14 @@ class OhHellGame:
                            last_winner= self.current_player,
                            current_player= self.current_player)
 
-        # Count the round. There are 11 rounds in each game.
+        # Count the round. There are 10 rounds in each game.
         self.round_counter = 0
 
         self.history = []
 
 
         # Save history of players that won
-        self.history_winners = [0 for _ in range(10)]
+        self.last_winner = 0
 
         player_id = self.round.current_player
         state = self.get_state(player_id)
@@ -96,21 +97,26 @@ class OhHellGame:
             d = deepcopy(self.dealer)
             p = deepcopy(self.played_cards)
             ps = deepcopy(self.players)
-            tw = copy(self.history_winners)
-            self.history.append((r, b, r_c, d, p, ps, tw))
+            lw = copy(self.last_winner)
+            self.history.append((r, b, r_c, d, p, ps, lw))
 
         # Then we proceed to the next round
         self.current_player = self.round.proceed_round(self.players, action)
-
+        self.played_cards = self.round.played_cards
+        
         # If a round is over, we refresh the played cards
         if self.round.is_over():
-            self.last_winner = (self.round.last_winner + self.judger.judge_round(self.played_cards, self.trump_card)) % self.num_players
+            self.last_winner = (self.round.last_winner + self.judger.judge_round(self.round.played_cards, self.trump_card)) % self.num_players
+            self.round.last_winner = self.last_winner
             self.current_player = self.last_winner
             self.round.current_player = self.last_winner
-            self.players[last_winner].tricks_won += 1
+            self.players[self.last_winner].tricks_won += 1
             self.played_cards = []
+            self.round.played_cards = []
             self.round_counter += 1
-            self.current_player = self.round.proceed_round(self.players, action)
+
+
+
 
         state = self.get_state(self.current_player)
 
@@ -129,6 +135,7 @@ class OhHellGame:
 
         state = self.round.get_state(self.players, player_id)
         state['current_player'] = self.round.current_player
+        state['trump_card'] = self.trump_card.get_index()
         return state
 
     
@@ -169,7 +176,7 @@ class OhHellGame:
         '''
 
         # If all rounds are finshed
-        if self.round_counter >= 11:
+        if self.round_counter >= 10:
             return True
         return False
 
@@ -197,7 +204,7 @@ class OhHellGame:
         Returns:
             (int): The number of actions. There are at most 62 possible actions.
         '''
-        return 62
+        return 63
 
     def get_player_id(self):
         ''' Return the current player's id
@@ -207,10 +214,4 @@ class OhHellGame:
         '''
         return self.round.current_player
 
-    def is_over(self):
-        ''' Check if the game is over
 
-        Returns:
-            (boolean): True if the game is over
-        '''
-        return self.round_counter == 11

@@ -1,5 +1,6 @@
 import unittest 
 import numpy as np 
+import random
 
 from rlcard.games.ohhell.game import OhHellGame as Game
 from rlcard.games.ohhell.player import OhHellPlayer as Player
@@ -17,12 +18,19 @@ class TestOhHellMethods(unittest.TestCase):
     def test_get_num_actions(self):
         game = Game()
         num_actions = game.get_num_actions()
-        self.assertEqual(num_actions, 62)
+        self.assertEqual(num_actions, 63)
 
     def test_init_game(self):
         game = Game()
         state, _ = game.init_game()
-
+        game.proposed_tricks = [2,2,2,0]
+        game.players[0].has_proposed = True
+        game.players[1].has_proposed = True
+        game.players[2].has_proposed = True
+        game.current_player = 3
+        actions = game.get_legal_actions()
+        self.assertNotIn(3, actions)
+        
     def test_step(self):
         game = Game()
 
@@ -36,8 +44,8 @@ class TestOhHellMethods(unittest.TestCase):
         proposed_tricks = game.round.proposed_tricks
         init_tricks += 1
         init_tricks = list(init_tricks)
-        self.assertEqual(init_tricks, proposed_tricks)
-        action = np.random.choice(game.get_legal_actions())
+        self.assertListEqual(init_tricks, proposed_tricks)
+        action = random.choice(game.get_legal_actions())
         state, next_player_id = game.step(action)
         current = game.round.current_player
         self.assertEqual(len(state['played_cards']), 1)
@@ -48,7 +56,7 @@ class TestOhHellMethods(unittest.TestCase):
         game.init_game()
         while not game.is_over():
             actions = game.get_legal_actions()
-            action = np.random.choice(actions)
+            action = random.choice(actions)
             state, _ = game.step(action)
         payoffs = game.get_payoffs()
         proposed_tricks = game.round.proposed_tricks
@@ -59,7 +67,7 @@ class TestOhHellMethods(unittest.TestCase):
     def test_step_back(self):
         game = Game(allow_step_back=True)
         _, player_id = game.init_game()
-        action = np.random.choice(game.get_legal_actions())
+        action = random.choice(game.get_legal_actions())
         game.step(action)
         game.step_back()
         self.assertEqual(game.round.current_player, player_id)

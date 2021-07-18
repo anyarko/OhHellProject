@@ -27,6 +27,7 @@ class OhHellRound:
         self.last_winner = last_winner
         self.current_player = current_player
         self.proposed_tricks = [0 for _ in range(self.num_players)]
+        self.players_proposed = 0
 
 
     def proceed_round(self, players, action):
@@ -44,6 +45,7 @@ class OhHellRound:
             players[self.current_player].proposed_tricks = action
             self.proposed_tricks[self.current_player] = action
             players[self.current_player].has_proposed = True
+            self.players_proposed += 1
         else:
             self.played_cards.append(action)
             players[self.current_player].hand.remove(action)
@@ -58,13 +60,22 @@ class OhHellRound:
         ''' Returns the list of actions possible for the player
         '''
         if players[player_id].has_proposed == False:
-            return list(range(0, self.round_number+1))
+            full_list = list(range(0, self.round_number+1))
+            if self.players_proposed == self.num_players - 1:
+                total_tricks = sum(self.proposed_tricks)
+                dissallowed_bid = self.round_number - total_tricks
+                if dissallowed_bid > 0 & dissallowed_bid <= self.round_number:
+                    full_list.remove(dissallowed_bid)
+                    return full_list
+            return full_list
 
         full_list = players[player_id].hand
 
         if player_id == self.last_winner:
             return full_list
         else:
+            if len(self.played_cards) == 0:
+                return full_list
             starting_suit = self.played_cards[0].suit
             hand_same_as_starter = [card for card in full_list if starting_suit == card.suit ]
             if hand_same_as_starter:
@@ -87,8 +98,8 @@ class OhHellRound:
         state['played_cards'] = [c.get_index() for c in self.played_cards]
         state['proposed_tricks'] = players[player_id].proposed_tricks
         state['tricks_won'] = players[player_id].tricks_won
+        state['players_tricks_won'] = [player.tricks_won for player in players]
         state['legal_actions'] = self.get_legal_actions(players, player_id)
-        state['trump_card'] = self.trump_card
         return state
 
     def is_over(self):
