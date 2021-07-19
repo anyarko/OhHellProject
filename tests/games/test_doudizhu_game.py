@@ -2,10 +2,10 @@ import unittest
 import numpy as np
 import functools
 
-from rlcard.games.doudizhu.game import DoudizhuGame as Game
-from rlcard.games.doudizhu.utils import get_landlord_score, encode_cards
-from rlcard.games.doudizhu.utils import doudizhu_sort_str
-from rlcard.games.doudizhu.judger import DoudizhuJudger as Judger
+from rlohhell.games.doudizhu.game import DoudizhuGame as Game
+from rlohhell.games.doudizhu.utils import get_landlord_score, encode_cards
+from rlohhell.games.doudizhu.utils import doudizhu_sort_str
+from rlohhell.games.doudizhu.judger import DoudizhuJudger as Judger
 
 
 class TestDoudizhuGame(unittest.TestCase):

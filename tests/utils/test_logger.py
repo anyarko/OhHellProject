@@ -2,7 +2,7 @@ import unittest
 import os
 import shutil
 
-from rlcard.utils.logger import Logger
+from rlohhell.utils.logger import Logger
 
 class TestLogger(unittest.TestCase):
 

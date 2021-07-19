@@ -2,11 +2,11 @@ import unittest
 import numpy as np 
 import random
 
-from rlcard.games.ohhell.game import OhHellGame as Game
-from rlcard.games.ohhell.player import OhHellPlayer as Player
-from rlcard.games.ohhell.judger import OhHellJudger as Judger
-from rlcard.games.ohhell.utils import ACTION_LIST, determine_winner, int2rank
-from rlcard.games.base import Card
+from rlohhell.games.ohhell.game import OhHellGame as Game
+from rlohhell.games.ohhell.player import OhHellPlayer as Player
+from rlohhell.games.ohhell.judger import OhHellJudger as Judger
+from rlohhell.games.ohhell.utils import ACTION_LIST, determine_winner, int2rank
+from rlohhell.games.base import Card
 
 class TestOhHellMethods(unittest.TestCase):
 

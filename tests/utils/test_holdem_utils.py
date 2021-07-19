@@ -1,9 +1,9 @@
 import itertools
 import unittest
 
-from rlcard.games.limitholdem.judger import LimitholdemJudger
-from rlcard.games.limitholdem.utils import compare_hands
-from rlcard.games.limitholdem.utils import Hand as Hand
+from rlohhell.games.limitholdem.judger import LimitholdemJudger
+from rlohhell.games.limitholdem.utils import compare_hands
+from rlohhell.games.limitholdem.utils import Hand as Hand
 import numpy as np
 ''' Combinations selected for testing compare_hands function
 Royal straight flush ['CJ', 'CT', 'CQ', 'CK', 'C9', 'C8', 'CA']

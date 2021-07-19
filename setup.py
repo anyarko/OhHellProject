@@ -8,7 +8,7 @@ extras = {
 }
 
 def _get_version():
-    with open('rlcard/__init__.py') as f:
+    with open('rlohhell/__init__.py') as f:
         for line in f:
             if line.startswith('__version__'):
                 g = {}
@@ -19,18 +19,18 @@ def _get_version():
 VERSION = _get_version()
 
 setuptools.setup(
-    name="rlcard",
+    name="rlohhell",
     version=VERSION,
     author="Team Warwick",
     author_email="albert.nyarko-agyei@warwick.ac.uk",
-    description="A Toolkit for Reinforcement Learning in Card Games",
+    description="An extension to RLcard",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/LeLingu/OhHellProject/rlcard",
+    url="https://github.com/LeLingu/OhHellProject/rlohhell",
     keywords=["Reinforcement Learning", "game", "RL", "AI"],
     packages=setuptools.find_packages(exclude=('tests',)),
     package_data={
-        'rlcard': ['models/pretrained/leduc_holdem_cfr/*',
+        'rlohhell': ['models/pretrained/leduc_holdem_cfr/*',
                    'games/uno/jsondata/action_space.json',
                    'games/limitholdem/card2index.json',
                    'games/leducholdem/card2index.json',

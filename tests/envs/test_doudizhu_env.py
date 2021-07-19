@@ -1,14 +1,14 @@
 import unittest
 
-import rlcard
-from rlcard.agents.random_agent import RandomAgent
+import rlohhell
+from rlohhell.agents.random_agent import RandomAgent
 from .determism_util import is_deterministic
 
 
 class TestDoudizhuEnv(unittest.TestCase):
 
     def test_reset_and_extract_state(self):
-        env = rlcard.make('doudizhu')
+        env = rlohhell.make('doudizhu')
         state, _ = env.reset()
         self.assertEqual(state['obs'].size, 790)
 
@@ -16,7 +16,7 @@ class TestDoudizhuEnv(unittest.TestCase):
         self.assertTrue(is_deterministic('doudizhu'))
 
     def test_get_legal_actions(self):
-        env = rlcard.make('doudizhu')
+        env = rlohhell.make('doudizhu')
         env.set_agents([RandomAgent(env.num_actions) for _ in range(env.num_actions)])
         env.reset()
         legal_actions = env._get_legal_actions()
@@ -24,26 +24,26 @@ class TestDoudizhuEnv(unittest.TestCase):
             self.assertLessEqual(legal_action, env.num_actions-1)
 
     def test_step(self):
-        env = rlcard.make('doudizhu')
+        env = rlohhell.make('doudizhu')
         _, player_id = env.reset()
         player = env.game.players[player_id]
         _, next_player_id = env.step(env.num_actions-2)
         self.assertEqual(next_player_id, (player.player_id+1)%len(env.game.players))
 
     def test_step_back(self):
-        env = rlcard.make('doudizhu', config={'allow_step_back':True})
+        env = rlohhell.make('doudizhu', config={'allow_step_back':True})
         _, player_id = env.reset()
         env.step(2)
         _, back_player_id = env.step_back()
         self.assertEqual(player_id, back_player_id)
         self.assertEqual(env.step_back(), False)
 
-        env = rlcard.make('doudizhu')
+        env = rlohhell.make('doudizhu')
         with self.assertRaises(Exception):
             env.step_back()
 
     def test_run(self):
-        env = rlcard.make('doudizhu')
+        env = rlohhell.make('doudizhu')
         env.set_agents([RandomAgent(env.num_actions) for _ in range(env.num_players)])
         trajectories, payoffs = env.run(is_training=False)
         self.assertEqual(len(trajectories), 3)
@@ -58,7 +58,7 @@ class TestDoudizhuEnv(unittest.TestCase):
             self.assertEqual(env.game.players[win[1]].role, 'peasant')
 
     def test_decode_action(self):
-        env = rlcard.make('doudizhu')
+        env = rlohhell.make('doudizhu')
         env.reset()
         env.game.state['actions'] = ['33366', '33355']
         env.game.judger.playable_cards[0] = ['5', '6', '55', '555', '33366', '33355']
@@ -69,7 +69,7 @@ class TestDoudizhuEnv(unittest.TestCase):
         self.assertEqual(decoded, '444')
 
     def test_get_perfect_information(self):
-        env = rlcard.make('doudizhu')
+        env = rlohhell.make('doudizhu')
         _, player_id = env.reset()
         self.assertEqual(player_id, env.get_perfect_information()['current_player'])
 if __name__ == '__main__':

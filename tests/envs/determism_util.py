@@ -1,5 +1,5 @@
-import rlcard
-from rlcard.agents.random_agent import RandomAgent
+import rlohhell
+from rlohhell.agents.random_agent import RandomAgent
 import random
 import numpy as np
 
@@ -45,7 +45,7 @@ def gather_observations(env, actions, num_rand_steps):
     return observations
 
 def is_deterministic(env_name):
-    env = rlcard.make(env_name)
+    env = rlohhell.make(env_name)
 
     NUM_STEPS = 25
 
@@ -53,7 +53,7 @@ def is_deterministic(env_name):
     base_seed = 12941
     hashes = []
     for rand_iters in range(2):
-        env = rlcard.make(env_name,config={'seed':base_seed})
+        env = rlohhell.make(env_name,config={'seed':base_seed})
 
         hashes.append(hash(tuple([hash_obsevation(obs['obs']) for obs in gather_observations(env,actions,rand_iters)])))
 

@@ -1,7 +1,7 @@
 import unittest
 
-from rlcard.games.doudizhu.utils import CARD_TYPE
-from rlcard.games.doudizhu.judger import DoudizhuJudger as Judger
+from rlohhell.games.doudizhu.utils import CARD_TYPE
+from rlohhell.games.doudizhu.judger import DoudizhuJudger as Judger
 
 class TestDoudizhuGame(unittest.TestCase):
 

@@ -7,19 +7,19 @@
 import unittest
 import numpy as np
 
-import rlcard.games.gin_rummy.judge as judge
-import rlcard.games.gin_rummy.utils.utils as utils
+import rlohhell.games.gin_rummy.judge as judge
+import rlohhell.games.gin_rummy.utils.utils as utils
 
-from rlcard.games.gin_rummy.dealer import GinRummyDealer
-from rlcard.games.gin_rummy.game import GinRummyGame as Game
-from rlcard.games.gin_rummy.player import GinRummyPlayer
-from rlcard.games.gin_rummy.utils.action_event import score_player_1_action_id
-from rlcard.games.gin_rummy.utils.action_event import draw_card_action_id, pick_up_discard_action_id
-from rlcard.games.gin_rummy.utils.action_event import declare_dead_hand_action_id
-from rlcard.games.gin_rummy.utils.action_event import gin_action_id, discard_action_id, knock_action_id
-from rlcard.games.gin_rummy.utils.melding import get_all_set_melds, get_all_run_melds, get_meld_clusters
-from rlcard.games.gin_rummy.utils.settings import Setting, Settings
-from rlcard.games.gin_rummy.utils.thinker import Thinker
+from rlohhell.games.gin_rummy.dealer import GinRummyDealer
+from rlohhell.games.gin_rummy.game import GinRummyGame as Game
+from rlohhell.games.gin_rummy.player import GinRummyPlayer
+from rlohhell.games.gin_rummy.utils.action_event import score_player_1_action_id
+from rlohhell.games.gin_rummy.utils.action_event import draw_card_action_id, pick_up_discard_action_id
+from rlohhell.games.gin_rummy.utils.action_event import declare_dead_hand_action_id
+from rlohhell.games.gin_rummy.utils.action_event import gin_action_id, discard_action_id, knock_action_id
+from rlohhell.games.gin_rummy.utils.melding import get_all_set_melds, get_all_run_melds, get_meld_clusters
+from rlohhell.games.gin_rummy.utils.settings import Setting, Settings
+from rlohhell.games.gin_rummy.utils.thinker import Thinker
 
 discard_action_ids = list(range(discard_action_id, discard_action_id + 52))
 knock_action_ids = list(range(knock_action_id, knock_action_id + 52))

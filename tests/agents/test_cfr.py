@@ -1,14 +1,14 @@
 import unittest
 import numpy as np
 
-import rlcard
-from rlcard.agents.cfr_agent import CFRAgent
+import rlohhell
+from rlohhell.agents.cfr_agent import CFRAgent
 
 class TestNFSP(unittest.TestCase):
 
     def test_train(self):
 
-        env = rlcard.make('leduc-holdem', config={'allow_step_back':True})
+        env = rlohhell.make('leduc-holdem', config={'allow_step_back':True})
         agent = CFRAgent(env, model_path='experiments/cfr_model')
 
         for _ in range(100):
@@ -20,7 +20,7 @@ class TestNFSP(unittest.TestCase):
         self.assertIn(action, [0, 2])
 
     def test_save_and_load(self):
-        env = rlcard.make('leduc-holdem', config={'allow_step_back':True})
+        env = rlohhell.make('leduc-holdem', config={'allow_step_back':True})
         agent = CFRAgent(env, model_path='experiments/cfr_model')
 
         for _ in range(100):
