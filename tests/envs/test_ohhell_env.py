@@ -5,7 +5,7 @@ import unittest
 import rlohhell
 from rlohhell.agents.random_agent import RandomAgent
 from rlohhell.games.ohhell.utils import ACTION_SPACE, ACTION_LIST, cards2list
-# from .determism_util import is_deterministic
+from determism_util import is_deterministic
 
 class TestOhHellEnv(unittest.TestCase):
 
@@ -16,8 +16,8 @@ class TestOhHellEnv(unittest.TestCase):
         for action in state['legal_actions']:
             self.assertLess(action, env.num_actions)
 
-    # def test_is_deterministic(self):
-    #     self.assertTrue(is_deterministic('ohhell'))
+    def test_is_deterministic(self):
+        self.assertTrue(is_deterministic('ohhell'))
 
     def test_get_legal_actions(self):
         env = rlohhell.make('ohhell')
