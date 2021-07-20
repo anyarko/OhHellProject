@@ -3,14 +3,14 @@
 import os
 import argparse
 
-import rlcard
-from rlcard.agents import CFRAgent, RandomAgent
-from rlcard.utils import set_seed, tournament, Logger
+import rlohhell
+from rlohhell.agents import CFRAgent, RandomAgent
+from rlohhell.utils import set_seed, tournament, Logger
 
 def train(args):
     # Make environments, CFR only supports Leduc Holdem
-    env = rlcard.make('leduc-holdem', config={'seed': 0, 'allow_step_back':True})
-    eval_env = rlcard.make('leduc-holdem', config={'seed': 0})
+    env = rlohhell.make('leduc-holdem', config={'seed': 0, 'allow_step_back':True})
+    eval_env = rlohhell.make('leduc-holdem', config={'seed': 0})
 
     # Seed numpy, torch, random
     set_seed(args.seed)
@@ -36,7 +36,7 @@ def train(args):
         logger.plot('CFR')
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser("CFR example in RLCard")
+    parser = argparse.ArgumentParser("CFR example in rlohhell")
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('--num_episodes', type=int, default=5000)
     parser.add_argument('--num_eval_games', type=int, default=2000)

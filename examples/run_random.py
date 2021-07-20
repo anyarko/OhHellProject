@@ -1,15 +1,15 @@
-''' An example of playing randomly in RLCard
+''' An example of playing randomly in rlohhell
 '''
 import argparse
 import pprint
 
-import rlcard
-from rlcard.agents import RandomAgent
-from rlcard.utils import set_seed
+import rlohhell
+from rlohhell.agents import RandomAgent
+from rlohhell.utils import set_seed
 
 def run(args):
     # Make environment
-    env = rlcard.make(args.env, config={'seed': 42})
+    env = rlohhell.make(args.env, config={'seed': 42})
 
     # Seed numpy, torch, random
     set_seed(42)
@@ -29,7 +29,7 @@ def run(args):
     pprint.pprint(trajectories[0][0]['raw_legal_actions'])
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser("Random example in RLCard")
+    parser = argparse.ArgumentParser("Random example in rlohhell")
     parser.add_argument('--env', type=str, default='leduc-holdem',
             choices=['blackjack', 'leduc-holdem', 'limit-holdem', 'doudizhu', 'mahjong', 'no-limit-holdem', 'uno', 'gin-rummy'])
 

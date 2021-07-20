@@ -1,17 +1,17 @@
-''' An example of training a Deep Monte-Carlo (DMC) Agent on the environments in RLCard
+''' An example of training a Deep Monte-Carlo (DMC) Agent on the environments in rlohhell
 '''
 import os
 import argparse
 
 import torch
 
-import rlcard
-from rlcard.agents.dmc_agent import DMCTrainer
+import rlohhell
+from rlohhell.agents.dmc_agent import DMCTrainer
 
 def train(args):
 
     # Make the environment
-    env = rlcard.make(args.env)
+    env = rlohhell.make(args.env)
 
     # Initialize the DMC trainer
     trainer = DMCTrainer(env,
@@ -27,7 +27,7 @@ def train(args):
     trainer.start()
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser("DMC example in RLCard")
+    parser = argparse.ArgumentParser("DMC example in rlohhell")
     parser.add_argument('--env', type=str, default='leduc-holdem',
             choices=['blackjack', 'leduc-holdem', 'limit-holdem', 'doudizhu', 'mahjong', 'no-limit-holdem', 'uno', 'gin-rummy'])
     parser.add_argument('--cuda', type=str, default='1')

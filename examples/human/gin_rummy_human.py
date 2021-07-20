@@ -24,21 +24,21 @@
 # from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from rlcard.envs.gin_rummy import GinRummyEnv
+    from rlohhell.envs.gin_rummy import GinRummyEnv
 
-import rlcard
+import rlohhell
 
-from rlcard.agents import RandomAgent
-from rlcard.models.gin_rummy_rule_models import GinRummyNoviceRuleAgent
-from rlcard.agents.human_agents.gin_rummy_human_agent.gin_rummy_human_agent import HumanAgent
+from rlohhell.agents import RandomAgent
+from rlohhell.models.gin_rummy_rule_models import GinRummyNoviceRuleAgent
+from rlohhell.agents.human_agents.gin_rummy_human_agent.gin_rummy_human_agent import HumanAgent
 
-from rlcard.agents.human_agents.gin_rummy_human_agent.gui_gin_rummy.game_app import GameApp
+from rlohhell.agents.human_agents.gin_rummy_human_agent.gui_gin_rummy.game_app import GameApp
 
-from rlcard.games.gin_rummy.utils import scorers
+from rlohhell.games.gin_rummy.utils import scorers
 
 
 def make_gin_rummy_env() -> 'GinRummyEnv':
-    gin_rummy_env = rlcard.make('gin-rummy')
+    gin_rummy_env = rlohhell.make('gin-rummy')
     # north_agent = RandomAgent(num_actions=gin_rummy_env.num_actions)
     north_agent = GinRummyNoviceRuleAgent()
     south_agent = HumanAgent(gin_rummy_env.num_actions)

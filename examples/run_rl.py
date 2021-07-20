@@ -1,13 +1,13 @@
-''' An example of training a reinforcement learning agent on the environments in RLCard
+''' An example of training a reinforcement learning agent on the environments in rlohhell
 '''
 import os
 import argparse
 
 import torch
 
-import rlcard
-from rlcard.agents import RandomAgent
-from rlcard.utils import get_device, set_seed, tournament, reorganize, Logger
+import rlohhell
+from rlohhell.agents import RandomAgent
+from rlohhell.utils import get_device, set_seed, tournament, reorganize, Logger
 
 def train(args):
 
@@ -18,17 +18,17 @@ def train(args):
     set_seed(args.seed)
 
     # Make the environment with seed
-    env = rlcard.make(args.env, config={'seed': args.seed})
+    env = rlohhell.make(args.env, config={'seed': args.seed})
 
     # Initialize the agent and use random agents as opponents
     if args.algorithm == 'dqn':
-        from rlcard.agents import DQNAgent
+        from rlohhell.agents import DQNAgent
         agent = DQNAgent(num_actions=env.num_actions,
                          state_shape=env.state_shape[0],
                          mlp_layers=[64,64],
                          device=device)
     elif args.algorithm == 'nfsp':
-        from rlcard.agents import NFSPAgent
+        from rlohhell.agents import NFSPAgent
         agent = NFSPAgent(num_actions=env.num_actions,
                           state_shape=env.state_shape[0],
                           hidden_layers_sizes=[64,64],
@@ -71,7 +71,7 @@ def train(args):
     print('Model saved in', save_path)
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser("DQN/NFSP example in RLCard")
+    parser = argparse.ArgumentParser("DQN/NFSP example in rlohhell")
     parser.add_argument('--env', type=str, default='leduc-holdem',
             choices=['blackjack', 'leduc-holdem', 'limit-holdem', 'doudizhu', 'mahjong', 'no-limit-holdem', 'uno', 'gin-rummy'])
     parser.add_argument('--algorithm', type=str, default='dqn', choices=['dqn', 'nfsp'])

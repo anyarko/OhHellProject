@@ -1,14 +1,14 @@
 ''' A toy example of playing against pretrianed AI on Leduc Hold'em
 '''
-from rlcard.agents import RandomAgent
+from rlohhell.agents import RandomAgent
 
-import rlcard
-from rlcard import models
-from rlcard.agents import NolimitholdemHumanAgent as HumanAgent
-from rlcard.utils import print_card
+import rlohhell
+from rlohhell import models
+from rlohhell.agents import NolimitholdemHumanAgent as HumanAgent
+from rlohhell.utils import print_card
 
 # Make environment
-env = rlcard.make('no-limit-holdem')
+env = rlohhell.make('no-limit-holdem')
 
 human_agent = HumanAgent(env.num_actions)
 human_agent2 = HumanAgent(env.num_actions)
