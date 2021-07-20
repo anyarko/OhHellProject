@@ -33,13 +33,13 @@ class TestUtils(unittest.TestCase):
 
     def test_reorganize(self):
         trajectories = reorganize([[[1,2],1,[4,5]]], [1])
-        self.assertEqual(np.array(trajectories).shape, (1, 1, 5))
+        self.assertEqual(np.array(trajectories, dtype=object).shape, (1, 1, 5))
 
     def test_tournament(self):
-        env = rlohhell.make('leduc-holdem')
-        env.set_agents([RandomAgent(env.num_actions), RandomAgent(env.num_actions)])
+        env = rlohhell.make('ohhell')
+        env.set_agents([RandomAgent(env.num_actions), RandomAgent(env.num_actions), RandomAgent(env.num_actions), RandomAgent(env.num_actions)])
         payoffs = tournament(env,1000)
-        self.assertEqual(len(payoffs), 2)
+        self.assertEqual(len(payoffs), 4)
 
 if __name__ == '__main__':
     unittest.main()

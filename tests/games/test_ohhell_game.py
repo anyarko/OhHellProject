@@ -62,7 +62,7 @@ class TestOhHellMethods(unittest.TestCase):
         proposed_tricks = game.round.proposed_tricks
         tricks_won = [player.tricks_won for player in game.players]
         expected_payoff = [ tricks+10 if tricks == proposed_tricks[k] else tricks for k, tricks in enumerate(tricks_won) ]
-        self.assertListEqual(expected_payoff, payoffs)
+        self.assertListEqual(expected_payoff, list(payoffs))
 
     def test_step_back(self):
         game = Game(allow_step_back=True)

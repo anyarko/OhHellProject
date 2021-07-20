@@ -36,4 +36,4 @@ class OhHellJudger:
 
         final_scores = [player.tricks_won for player in players]
 
-        return final_scores
+        return tuple(final_scores)
