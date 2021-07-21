@@ -1,11 +1,11 @@
-''' An example of evluating the trained models in rlohhell
+''' An example of evluating the trained models in RLCard
 '''
 import os
 import argparse
 
-import rlohhell
-from rlohhell.agents import DQNAgent, RandomAgent
-from rlohhell.utils import get_device, set_seed, tournament, reorganize, Logger
+import rlcard
+from rlcard.agents import DQNAgent, RandomAgent
+from rlcard.utils import get_device, set_seed, tournament
 
 def load_model(model_path, env=None, position=None, device=None):
     if os.path.isfile(model_path):  # Torch model
@@ -13,14 +13,14 @@ def load_model(model_path, env=None, position=None, device=None):
         agent = torch.load(model_path, map_location=device)
         agent.set_device(device)
     elif os.path.isdir(model_path):  # CFR model
-        from rlohhell.agents import CFRAgent
+        from rlcard.agents import CFRAgent
         agent = CFRAgent(env, model_path)
         agent.load()
     elif model_path == 'random':  # Random model
-        from rlohhell.agents import RandomAgent
+        from rlcard.agents import RandomAgent
         agent = RandomAgent(num_actions=env.num_actions)
     else:  # A model in the model zoo
-        from rlohhell import models
+        from rlcard import models
         agent = models.load(model_path).agents[position]
     
     return agent
@@ -34,7 +34,7 @@ def evaluate(args):
     set_seed(args.seed)
 
     # Make the environment with seed
-    env = rlohhell.make(args.env, config={'seed': args.seed})
+    env = rlcard.make(args.env, config={'seed': args.seed})
 
     # Load models
     agents = []
@@ -48,7 +48,7 @@ def evaluate(args):
         print(position, args.models[position], reward)
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser("Evaluation example in rlohhell")
+    parser = argparse.ArgumentParser("Evaluation example in RLCard")
     parser.add_argument('--env', type=str, default='leduc-holdem',
             choices=['blackjack', 'leduc-holdem', 'limit-holdem', 'doudizhu', 'mahjong', 'no-limit-holdem', 'uno', 'gin-rummy'])
     parser.add_argument('--models', nargs='*', default=['experiments/leduc_holdem_dqn_result/model.pth', 'random'])

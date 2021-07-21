@@ -109,8 +109,7 @@ def int2rank(number):
     elif number == 13:
         return "K"
     return None
-
-
+    
 def elegent_form(card):
     ''' Get a elegent form of a card string
 

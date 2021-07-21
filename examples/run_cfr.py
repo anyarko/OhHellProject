@@ -3,14 +3,14 @@
 import os
 import argparse
 
-import rlohhell
-from rlohhell.agents import CFRAgent, RandomAgent
-from rlohhell.utils import set_seed, tournament, Logger
+import rlcard
+from rlcard.agents import CFRAgent, RandomAgent
+from rlcard.utils import set_seed, tournament, Logger, plot_curve
 
 def train(args):
     # Make environments, CFR only supports Leduc Holdem
-    env = rlohhell.make('leduc-holdem', config={'seed': 0, 'allow_step_back':True})
-    eval_env = rlohhell.make('leduc-holdem', config={'seed': 0})
+    env = rlcard.make('leduc-holdem', config={'seed': 0, 'allow_step_back':True})
+    eval_env = rlcard.make('leduc-holdem', config={'seed': 0})
 
     # Seed numpy, torch, random
     set_seed(args.seed)
@@ -32,11 +32,13 @@ def train(args):
                 agent.save() # Save model
                 logger.log_performance(env.timestep, tournament(eval_env, args.num_eval_games)[0])
 
-        # Plot the learning curve
-        logger.plot('CFR')
+        # Get the paths
+        csv_path, fig_path = logger.csv_path, logger.fig_path
+    # Plot the learning curve
+    plot_curve(csv_path, fig_path, 'cfr')
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser("CFR example in rlohhell")
+    parser = argparse.ArgumentParser("CFR example in RLCard")
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('--num_episodes', type=int, default=5000)
     parser.add_argument('--num_eval_games', type=int, default=2000)
