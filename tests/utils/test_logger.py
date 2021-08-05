@@ -2,7 +2,7 @@ import unittest
 import os
 import shutil
 
-from rlohhell.utils.logger import Logger
+from rlohhell.utils.logger import Logger, plot_curve
 
 class TestLogger(unittest.TestCase):
 
@@ -15,7 +15,7 @@ class TestLogger(unittest.TestCase):
             logger.log_performance(1, 1)
             logger.log_performance(2, 2)
             logger.log_performance(3, 3)
-            logger.plot('aaa')
+            plot_curve(logger.csv_path, logger.fig_path, 'Test aglorithm')
 
 if __name__ == '__main__':
     unittest.main()

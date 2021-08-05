@@ -7,7 +7,6 @@ class Logger(object):
 
     def __init__(self, log_dir):
         ''' Initialize the labels, legend and paths of the plot and log file.
-
         Args:
             log_path (str): The path the log files
         '''

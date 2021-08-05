@@ -35,6 +35,7 @@ rlohhell/games/ohhell/utils.py
 rlohhell/games/ohhell/jsondata/action_space.json
 rlohhell/models/__init__.py
 rlohhell/models/model.py
+rlohhell/models/ohhell_rule_models.py
 rlohhell/models/registration.py
 rlohhell/models/pretrained/leduc_holdem_cfr/average_policy.pkl
 rlohhell/models/pretrained/leduc_holdem_cfr/iteration.pkl
