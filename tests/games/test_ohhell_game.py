@@ -23,13 +23,12 @@ class TestOhHellMethods(unittest.TestCase):
     def test_init_game(self):
         game = Game()
         state, _ = game.init_game()
-        game.proposed_tricks = [2,2,2,0]
-        game.players[0].has_proposed = True
-        game.players[1].has_proposed = True
-        game.players[2].has_proposed = True
-        game.current_player = 3
+        game.step(1)
+        game.step(1)
+        game.step(2)
         actions = game.get_legal_actions()
-        self.assertNotIn(3, actions)
+        print(actions)
+        self.assertNotIn(6, actions)
         
     def test_step(self):
         game = Game()

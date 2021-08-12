@@ -64,7 +64,7 @@ class OhHellRound:
             if self.players_proposed == self.num_players - 1:
                 total_tricks = sum(self.proposed_tricks)
                 dissallowed_bid = self.round_number - total_tricks
-                if dissallowed_bid > 0 & dissallowed_bid <= self.round_number:
+                if dissallowed_bid > -1 and dissallowed_bid <= self.round_number:
                     full_list.remove(dissallowed_bid)
                     return full_list
             return full_list

@@ -203,7 +203,7 @@ class OhHellGame:
         ''' Return the number of applicable actions
 
         Returns:
-            (int): The number of actions. There are at most 62 possible actions.
+            (int): The number of actions. There are at most 63 possible actions.
         '''
         return 63
 
