@@ -36,33 +36,51 @@ class OhHellEnv(Env):
         # obs = np.zeros((4, 4, 15), dtype=int)
         # encode_hand(obs[:3], state['hand'])
         # encode_trump_card(obs[3], state['trump_card'])
-        played_cards = state['played_cards']
-        hand = state['hand']
-        trump_card = state['trump_card']
-        tricks_won = state['tricks_won']
-        proposed_tricks = state['proposed_tricks']
-        players_tricks_won = state['players_tricks_won']
+        # played_cards = state['played_cards']
+        # hand = state['hand']
+        # trump_card = state['trump_card']
+        # tricks_won = state['tricks_won']
+        # proposed_tricks = state['proposed_tricks']
+        # players_tricks_won = state['players_tricks_won']
         
-        idx1 = [self.card2index[card] for card in played_cards]
-        idx2 = list(np.array([self.card2index[card] for card in hand]) + 51)
+        # idx1 = [self.card2index[card] for card in played_cards]
+        # idx2 = list(np.array([self.card2index[card] for card in hand]) + 51)
         
-        obs = np.zeros(111)
-        obs[idx1] = 1
-        obs[idx2] = 1
-        obs[104] = self.card2index[trump_card] 
-        obs[105] = tricks_won
-        obs[106] = proposed_tricks
-        obs[107:] = players_tricks_won
+        # obs = np.zeros(111)
+        # obs[idx1] = 1
+        # obs[idx2] = 1
+        # obs[104] = self.card2index[trump_card] 
+        # obs[105] = tricks_won
+        # obs[106] = proposed_tricks
+        # obs[107:] = players_tricks_won
 
         
-        legal_action_id = self._get_legal_actions()
-        extracted_state = {'obs': obs, 'legal_actions': legal_action_id}
+        # legal_action_id = self._get_legal_actions()
+        # extracted_state = {'obs': obs, 'legal_actions': legal_action_id}
 
 
-        extracted_state['raw_obs'] = state
-        extracted_state['raw_legal_actions'] = [a for a in state['legal_actions']]
-        extracted_state['action_record'] = self.action_recorder
-        return extracted_state
+        # extracted_state['raw_obs'] = state
+        # extracted_state['raw_legal_actions'] = [a for a in state['legal_actions']]
+        # extracted_state['action_record'] = self.action_recorder
+        # return extracted_state
+
+        ''' get_state(player_id) is called on game and returns a dictonary with
+
+        state['hand'] = [c.get_index() for c in players[player_id].hand]
+        state['played_cards'] = [c.get_index() for c in self.played_cards]
+        state['proposed_tricks'] = players[player_id].proposed_tricks
+        state['tricks_won'] = players[player_id].tricks_won
+        state['players_tricks_won'] = [player.tricks_won for player in players]
+        state['legal_actions'] = self.get_legal_actions(players, player_id) 
+        state['current_player'] = self.round.current_player
+        state['trump_card'] = self.trump_card.get_index()
+        state['previous_cards_played'] = [c.get_index() for c in self.previous_cards_played]
+
+
+        get_index returns suit+rank for the card for instance S2 or SA 
+
+        we can encode the information from this and return an extracted state, the previous version is above for tips.
+        '''
 
 
 

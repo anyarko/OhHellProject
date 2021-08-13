@@ -67,6 +67,8 @@ class OhHellGame:
 
         self.history = []
 
+        self.previous_cards_played = []
+
 
         # Save history of players that won
         self.last_winner = 0
@@ -112,6 +114,7 @@ class OhHellGame:
             self.current_player = self.last_winner
             self.round.current_player = self.last_winner
             self.players[self.last_winner].tricks_won += 1
+            self.previous_cards_played = self.previous_cards_played + self.played_cards
             self.played_cards = []
             self.round.played_cards = []
             self.round_counter += 1
@@ -137,6 +140,7 @@ class OhHellGame:
         state = self.round.get_state(self.players, player_id)
         state['current_player'] = self.round.current_player
         state['trump_card'] = self.trump_card.get_index()
+        state['previous_cards_played'] = [c.get_index() for c in self.previous_cards_played]
         return state
 
     
