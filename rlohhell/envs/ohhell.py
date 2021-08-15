@@ -9,6 +9,7 @@ from rlohhell.envs import Env
 from rlohhell.games.ohhell import Game
 from rlohhell.games.base import Card
 from rlohhell.games.ohhell.utils import ACTION_SPACE, ACTION_LIST, cards2list
+from rlohhell.utils.utils import rank2int, int2rank
 
 DEFAULT_GAME_CONFIG = {
         'game_num_players': 4,
@@ -225,6 +226,47 @@ class OhHellEnv2(gym.Env):
 
         we can encode the information from this and return an extracted state, the previous version is above for tips.
         '''
+
+        obs = np.zeros(442)
+
+        trump_suit = state['trump_card'][0]
+        trump_cards = [ card for card in state['hand'] if trump_suit == card[0] ]
+        no_trump_cards = len(trump_cards)
+        top_trump_cards = [ rank2int(card[1]) for card in trump_cards if rank2int(card[1]) > 9 ]
+        high_cards = [ card for card in state['hand'] if rank2int(card[1]) > 12 ]
+        no_high_cards = len(high_cards)
+        idx1 = list(np.array([self.card2index[card] for card in state['played_cards']]) + 34)
+        idx2 = list(np.array([self.card2index[card] for card in hand]) + 51)
+
+
+        # Encoding
+        # obs 0-9
+        if no_trump_cards > 0:
+            obs[no_trump_cards-1] = 1
+        
+        # obs 10-14
+        if len(top_trump_cards) > 0:
+            obs[top_trump_cards] = 1
+
+        # obs 15-24
+        if no_high_cards > 0:
+            obs[15 + no_high_cards] = 1
+
+        # obs 24-33
+        if state['proposed_tricks'] > 0:
+            obs[25 + state['proposed_tricks']] = 1
+
+        # obs 34-85
+        obs[idx1] = 1
+
+        # 
+
+
+
+
+
+
+
 
     
     def reset(self):
