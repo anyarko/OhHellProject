@@ -21,7 +21,6 @@ rlohhell/agents/human_agents/__init__.py
 rlohhell/envs/__init__.py
 rlohhell/envs/env.py
 rlohhell/envs/ohhell.py
-rlohhell/envs/ohhell_input.py
 rlohhell/envs/registration.py
 rlohhell/games/__init__.py
 rlohhell/games/base.py
