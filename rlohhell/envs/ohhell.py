@@ -88,16 +88,18 @@ class OhHellEnv2(gym.Env):
         '''
 
 
-        obs = np.zeros(442)
+        obs = np.zeros(404)
 
         trump_suit = state['trump_card'][0]
-        trump_cards = [ card for card in state['hand'] if trump_suit == card[0] ]
-        no_trump_cards = len(trump_cards)
-        top_trump_cards = [ rank2int(card[1]) for card in trump_cards if rank2int(card[1]) > 9 ]
+        agent_trump_cards = [ card for card in state['hand'] if trump_suit == card[0] ]
+        no_trump_cards = len(agent_trump_cards)
+        top_trump_cards = [ rank2int(card[1]) for card in agent_trump_cards if rank2int(card[1]) > 9 ]
         high_cards = [ card for card in state['hand'] if rank2int(card[1]) > 12 ]
         no_high_cards = len(high_cards)
-        idx1 = list(np.array([self.card2index[card] for card in state['played_cards']]) + 34)
-        idx2 = list(np.array([self.card2index[card] for card in hand]) + 51)
+        idx1 = list(np.array([self.card2index[card] for card in state['hand']]) + 44)
+        idx2 = list(np.array([self.card2index[card] for card in agent_trump_cards]) + 96)
+        idx3 = list(np.array([self.card2index[card] for card in agent_trump_cards]) + 148)
+        high_cards_set = {'SA', 'SK', 'HA', 'HK', 'CA', 'CK', 'DA', 'DK'}
 
         # Encoding
         # obs 0-9
@@ -110,16 +112,37 @@ class OhHellEnv2(gym.Env):
 
         # obs 15-24
         if no_high_cards > 0:
-            obs[15 + no_high_cards] = 1
+            obs[14 + no_high_cards] = 1
 
-        # obs 24-33
+        # obs 25-34
         if state['proposed_tricks'] > 0:
-            obs[25 + state['proposed_tricks']] = 1
+            obs[24 + state['proposed_tricks']] = 1
 
-        # obs 34-85
+        # obs 35-44
+        if state['tricks_won'] > 0:
+            obs[34 + state['tricks_won']] = 1
+
+        # obs 44-95
         obs[idx1] = 1
 
-        # 
+        # obs 96-147
+        obs[idx2] = 1
+
+        # obs 148-155
+        matches = [ high_cards_set.index(card) for card in agent_trump_cards ]
+        obs[147 + np.array(matches)] = 1
+
+        for player in self.game.num_players:
+            
+
+
+
+
+
+
+
+        
+        
 
 
 
