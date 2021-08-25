@@ -88,49 +88,56 @@ class OhHellEnv2(gym.Env):
         '''
 
 
-        obs = np.zeros(404)
+        obs = np.zeros(350)
 
         hand = state['hand']
-        no_cards_left = len(hand)
+        num_cards_left = len(hand)
         position = state['current_player']
         trump_suit = state['trump_card'][0]
         agent_trump_cards = [ card for card in state['hand'] if trump_suit == card[0] ]
-        no_trump_cards = len(agent_trump_cards)
+        num_trump_cards = len(agent_trump_cards)
         top_trump_cards = [ rank2int(card[1]) for card in agent_trump_cards if rank2int(card[1]) > 9 ]
         high_cards = [ card for card in state['hand'] if rank2int(card[1]) > 12 ]
-        no_high_cards = len(high_cards)
+        num_high_cards = len(high_cards)
         idx1 = list(np.array([self.card2index[card] for card in state['hand']]) + 43)
         idx2 = list(np.array([rank2int(card[1]) for card in agent_trump_cards]) + 107)
         idx3 = list(np.array([self.card2index[card] for card in agent_trump_cards]) + 148)
         high_cards_set = {'SA', 'SK', 'HA', 'HK', 'CA', 'CK', 'DA', 'DK'}
-        suits_set = {'S', 'D', 'C', 'H'}
+        suits_set = {'S', 'H', 'D', 'C'}
 
         # Encoding
         # obs 0-9
-        if no_trump_cards > 0:
-            obs[no_trump_cards-1] = 1
+        # Adding num of trump card's in player's hand
+        if num_trump_cards > 0:
+            obs[num_trump_cards-1] = 1
         
         # obs 10-14
+        # Adding top trump cards in player's hand, cards greater than 9
         if len(top_trump_cards) > 0:
             obs[top_trump_cards] = 1
 
         # obs 15-22
-        if no_high_cards > 0:
-            obs[14 + no_high_cards] = 1
+        # Adding the num of ace and kings in player's hand 
+        if num_high_cards > 0:
+            obs[14 + num_high_cards] = 1
 
         # obs 23-32
+        # Adding the player's estimate of tricks to win
         if state['proposed_tricks'] > 0:
             obs[22 + state['proposed_tricks']] = 1
 
         # obs 33-42
+        # Adding tricks won by player
         if state['tricks_won'] > 0:
             obs[32 + state['tricks_won']] = 1
 
         # obs 43-94
+        # Adding player's hand using card2index file
         obs[idx1] = 1
 
         # obs 95-104
-        if no_cards_left > 0:
+
+        if num_cards_left > 0:
             obs[105 - no_cards_left] = 1
 
         # obs 105-108
@@ -146,6 +153,8 @@ class OhHellEnv2(gym.Env):
         obs[147 + np.array(matches)] = 1
 
         for player in self.game.num_players:
+
+        list_name[-self.current_player] 
             
 
 
