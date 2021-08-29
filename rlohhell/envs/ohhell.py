@@ -38,36 +38,6 @@ class OhHellEnv2(gym.Env):
 
     
     def _extract_state(self, state):
-        # obs = np.zeros((4, 4, 15), dtype=int)
-        # encode_hand(obs[:3], state['hand'])
-        # encode_trump_card(obs[3], state['trump_card'])
-        # played_cards = state['played_cards']
-        # hand = state['hand']
-        # trump_card = state['trump_card']
-        # tricks_won = state['tricks_won']
-        # proposed_tricks = state['proposed_tricks']
-        # players_tricks_won = state['players_tricks_won']
-        
-        # idx1 = [self.card2index[card] for card in played_cards]
-        # idx2 = list(np.array([self.card2index[card] for card in hand]) + 51)
-        
-        # obs = np.zeros(111)
-        # obs[idx1] = 1
-        # obs[idx2] = 1
-        # obs[104] = self.card2index[trump_card] 
-        # obs[105] = tricks_won
-        # obs[106] = proposed_tricks
-        # obs[107:] = players_tricks_won
-
-        
-        # legal_action_id = self._get_legal_actions()
-        # extracted_state = {'obs': obs, 'legal_actions': legal_action_id}
-
-
-        # extracted_state['raw_obs'] = state
-        # extracted_state['raw_legal_actions'] = [a for a in state['legal_actions']]
-        # extracted_state['action_record'] = self.action_recorder
-        # return extracted_state
 
         ''' get_state(player_id) is called on game and returns a dictonary with
 
@@ -90,9 +60,11 @@ class OhHellEnv2(gym.Env):
 
         obs = np.zeros(350)
 
+        current_player = state['current_player']
         hand = state['hand']
+        bid = state['proposed_tricks']
+        tricks_won =  state['tricks_won']
         num_cards_left = len(hand)
-        position = state['current_player']
         trump_suit = state['trump_card'][0]
         agent_trump_cards = [ card for card in state['hand'] if trump_suit == card[0] ]
         num_trump_cards = len(agent_trump_cards)
@@ -123,38 +95,51 @@ class OhHellEnv2(gym.Env):
 
         # obs 23-32
         # Adding the player's estimate of tricks to win
-        if state['proposed_tricks'] > 0:
-            obs[22 + state['proposed_tricks']] = 1
+        if bid > 0:
+            obs[22 + bid] = 1
 
         # obs 33-42
         # Adding tricks won by player
-        if state['tricks_won'] > 0:
-            obs[32 + state['tricks_won']] = 1
+        if tricks_won > 0:
+            obs[32 + tricks_won] = 1
 
         # obs 43-94
         # Adding player's hand using card2index file
         obs[idx1] = 1
 
         # obs 95-104
-
+        # Adding the numnber of card left in the player's hand
         if num_cards_left > 0:
             obs[105 - no_cards_left] = 1
 
         # obs 105-108
-        obs[105 + position] = 1
+        # Adding the position of the player in the game 
+        obs[105 + current_player] = 1
 
         # obs 109-125
+        # Adding the trump card in the player's hand
         obs[idx2] = 1
         trump_suit_index = suits_set.index(trump_suit)
         obs[122 + trump_suit_index] = 1
 
         # obs 126-133
+        # Adding the high cards in the player's hand
         matches = [ high_cards_set.index(card) for card in agent_trump_cards ]
         obs[147 + np.array(matches)] = 1
 
-        for player in self.game.num_players:
+        # obs 
+        # Adding opponent specfic data, bid, trump cards played, tricks won
+        for opponent_id in range(self.game.num_players):
+            if opponent_id == current_player:
+                continue
 
-        list_name[-self.current_player] 
+        # obs 
+        # Adding the cards plaued in the round data
+
+
+        # obs
+        # Adding all the card played so far in the game
+            
             
 
 
@@ -164,14 +149,7 @@ class OhHellEnv2(gym.Env):
 
 
         
-        
-
-
-
-
-
-
-
+    
 
     
     def reset(self):
