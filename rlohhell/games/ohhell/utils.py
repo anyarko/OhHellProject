@@ -75,3 +75,10 @@ def cards2list(cards):
         cards_list.append(card.get_str())
     return cards_list
 
+
+def trumps_in_hand(hand, trump_suit):
+    ''' Return an array of the trumps in a given list'''
+    trump_cards = [ card for card in hand if trump_suit == card[0] ]
+    return trump_cards
+
+

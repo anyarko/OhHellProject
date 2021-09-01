@@ -8,7 +8,7 @@ import rlohhell
 from rlohhell.envs import Env
 from rlohhell.games.ohhell import Game
 from rlohhell.games.base import Card
-from rlohhell.games.ohhell.utils import ACTION_SPACE, ACTION_LIST, cards2list
+from rlohhell.games.ohhell.utils import ACTION_SPACE, ACTION_LIST, cards2list, trumps_in_hand
 from rlohhell.utils.utils import rank2int, int2rank
 
 
@@ -60,7 +60,7 @@ class OhHellEnv2(gym.Env):
         '''
 
 
-        obs = np.zeros(350)
+        obs = np.zeros(356)
 
         current_player = state['current_player']
         hand = state['hand']
@@ -68,7 +68,7 @@ class OhHellEnv2(gym.Env):
         tricks_won =  state['tricks_won']
         num_cards_left = len(hand)
         trump_suit = state['trump_card'][0]
-        agent_trump_cards = [ card for card in state['hand'] if trump_suit == card[0] ]
+        agent_trump_cards = trumps_in_hand(hand, trump_suit)
         num_trump_cards = len(agent_trump_cards)
         top_trump_cards = [ rank2int(card[1]) for card in agent_trump_cards if rank2int(card[1]) > 9 ]
         high_cards = [ card for card in state['hand'] if rank2int(card[1]) > 12 ]
@@ -82,6 +82,9 @@ class OhHellEnv2(gym.Env):
         num_played_cards_round = len(played_cards)
         players_tricks_won = state['players_tricks_won']
         players_tricks_proposed = state['players_tricks_proposed']
+        players_previously_played_cards = state['players_previously_played_cards'] 
+        previously_played_cards = state['previously_played_cards']
+        idx5 = list(np.array([self.card2index[card] for card in previously_played_cards]) + 304)
 
         # Encoding
 
@@ -159,13 +162,6 @@ class OhHellEnv2(gym.Env):
         Number of tricks won
         Trump cards played'''
 
-
-
-        # state['players_tricks_proposed'] = [player.proposed_tricks for player in self.players]
-        # state['players_tricks_won'] = [player.tricks_won for player in players]
-        # state['players_previously_played_cards'] = [player.played_cards for player in self.players]
-
-
         # obs 136-240
         # Adding opponent specfic data, bid, trump cards played, tricks won
         start_encoding_here = 136
@@ -174,34 +170,50 @@ class OhHellEnv2(gym.Env):
                 continue
             
             # obs 136-146
+            # Adding the tricks proposed by the opponent
             obs[start_encoding_here + players_tricks_proposed[opponent_id]] = 1
+            
             # obs 147-157
+            # Adding the tricks won by the opponent
             obs[start_encoding_here + 10 + players_tricks_won[opponent_id]] = 1
+            
             # obs 158-170
-            # obs[start_encoding_here + 10 + idx4] = 1
-
+            # Adding the trumps played by the opponent
+            opponents_played_trumps = trumps_in_hand(players_previously_played_cards[opponent_id], trump_suit)
+            idx4 = list(np.array([rank2int(card[1]) for card in opponents_played_trumps]) + start_encoding_here + 20))
+            obs[idx4] = 1
+            
+            # Skipping to the next part of the obs vector for a new opponent encoding
             start_encoding_here += 35
 
 
 
+        '''Section f - previous turns
+        The value and suits of up to the previous 3 hands
+        Also determine whether card is the highest trump card or leading suit card played'''
 
-        # obs 
-        # Adding the cards plaued in the round data
+        # obs 241-303
+        # Adding the cards played in the round
+        if num_played_cards_round > 0:
 
+        if num_played_cards_round > 1:
 
-        # obs
+        if num_played_cards_round > 2:
+
+        
+        '''Section g - used
+        Cards used (in hand, trump card, played)'''
+
+        # obs 304-355
         # Adding all the card played so far in the game
+        obs[idx5] = 1
             
-            
 
-
-
-
-
+        
+        return obs
 
 
         
-    
 
     
     def reset(self):
