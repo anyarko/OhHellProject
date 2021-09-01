@@ -80,6 +80,8 @@ class OhHellEnv2(gym.Env):
         suits_set = {'S', 'H', 'D', 'C'}
         played_cards = state['played_cards']
         num_played_cards_round = len(played_cards)
+        players_tricks_won = state['players_tricks_won']
+        players_tricks_proposed = state['players_tricks_proposed']
 
         # Encoding
 
@@ -164,11 +166,21 @@ class OhHellEnv2(gym.Env):
         # state['players_previously_played_cards'] = [player.played_cards for player in self.players]
 
 
-        # obs 
+        # obs 136-240
         # Adding opponent specfic data, bid, trump cards played, tricks won
+        start_encoding_here = 136
         for opponent_id in range(self.game.num_players):
             if opponent_id == current_player:
                 continue
+            
+            # obs 136-146
+            obs[start_encoding_here + players_tricks_proposed[opponent_id]] = 1
+            # obs 147-157
+            obs[start_encoding_here + 10 + players_tricks_won[opponent_id]] = 1
+            # obs 158-170
+            # obs[start_encoding_here + 10 + idx4] = 1
+
+            start_encoding_here += 35
 
 
 
