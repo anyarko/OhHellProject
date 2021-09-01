@@ -9,6 +9,7 @@ class OhHellPlayer:
         self.np_random = np_random
         self.player_id = player_id
         self.hand = []
+        self.played_cards = []
         self.has_proposed = False
 
         # The tricks that the player has proposed for the round

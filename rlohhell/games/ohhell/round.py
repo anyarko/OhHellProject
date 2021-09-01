@@ -47,6 +47,7 @@ class OhHellRound:
             players[self.current_player].has_proposed = True
             self.players_proposed += 1
         else:
+            players[self.current_player].played_cards.append(action)
             self.played_cards.append(action)
             players[self.current_player].hand.remove(action)
 

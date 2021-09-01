@@ -49,7 +49,9 @@ class OhHellEnv2(gym.Env):
         state['legal_actions'] = self.get_legal_actions(players, player_id) 
         state['current_player'] = self.round.current_player
         state['trump_card'] = self.trump_card.get_index()
-        state['previous_cards_played'] = [c.get_index() for c in self.previous_cards_played]
+        state['previously_played_cards'] = [c.get_index() for c in self.previously_played_cards]
+        state['players_tricks_proposed'] = [player.proposed_tricks for player in self.players]
+        state['players_previously_played_cards'] = [player.played_cards for player in self.players]
 
 
         get_index returns suit+rank for the card for instance S2 or SA 
@@ -71,13 +73,22 @@ class OhHellEnv2(gym.Env):
         top_trump_cards = [ rank2int(card[1]) for card in agent_trump_cards if rank2int(card[1]) > 9 ]
         high_cards = [ card for card in state['hand'] if rank2int(card[1]) > 12 ]
         num_high_cards = len(high_cards)
-        idx1 = list(np.array([self.card2index[card] for card in state['hand']]) + 43)
-        idx2 = list(np.array([rank2int(card[1]) for card in agent_trump_cards]) + 107)
+        idx1 = list(np.array([self.card2index[card] for card in state['hand']]) + 34)
+        idx2 = list(np.array([rank2int(card[1]) for card in agent_trump_cards]) + 109)
         idx3 = list(np.array([self.card2index[card] for card in agent_trump_cards]) + 148)
         high_cards_set = {'SA', 'SK', 'HA', 'HK', 'CA', 'CK', 'DA', 'DK'}
         suits_set = {'S', 'H', 'D', 'C'}
+        played_cards = state['played_cards']
+        num_played_cards_round = len(played_cards)
 
         # Encoding
+
+        '''Section a - agent bidding
+        Number of trump cards in agent's hand
+        High valued trump cards (10-A) in agent's hand
+        High valued cards (A/K) in agent's hand
+        Agent's prediction for no. of tricks to be won'''
+
         # obs 0-9
         # Adding num of trump card's in player's hand
         if num_trump_cards > 0:
@@ -89,49 +100,78 @@ class OhHellEnv2(gym.Env):
             obs[top_trump_cards] = 1
 
         # obs 15-22
-        # Adding the num of ace and kings in player's hand 
+        # Adding the num of aces and kings in player's hand 
         if num_high_cards > 0:
             obs[14 + num_high_cards] = 1
 
-        # obs 23-32
+        # obs 23-33
         # Adding the player's estimate of tricks to win
-        if bid > 0:
-            obs[22 + bid] = 1
+        obs[23 + bid] = 1
 
-        # obs 33-42
-        # Adding tricks won by player
-        if tricks_won > 0:
-            obs[32 + tricks_won] = 1
+        '''Section b - agent
+        Map the agents cards
+        Number of cards agent has played
+        Agents position relative to the first hand
+        Number of tricks the agent has won'''
 
-        # obs 43-94
+        # obs 34-85
         # Adding player's hand using card2index file
         obs[idx1] = 1
 
-        # obs 95-104
+        # obs 86-95
         # Adding the numnber of card left in the player's hand
         if num_cards_left > 0:
-            obs[105 - no_cards_left] = 1
+            obs[96 - no_cards_left] = 1
 
-        # obs 105-108
+        # obs 96-99
         # Adding the position of the player in the game 
-        obs[105 + current_player] = 1
+        obs[96 + num_played_cards_round] = 1
 
-        # obs 109-125
+        # obs 100-110
+        # Adding tricks won by player
+        obs[100 + tricks_won] = 1
+
+
+        '''Section c - trump cards
+        Trump cards visible to agent (face card, played, in hand)'''
+
+        # obs 111-127
         # Adding the trump card in the player's hand
         obs[idx2] = 1
         trump_suit_index = suits_set.index(trump_suit)
-        obs[122 + trump_suit_index] = 1
+        obs[124 + trump_suit_index] = 1
 
-        # obs 126-133
+
+        '''Section d - high cards
+        High cards (A/K) visible to agent (face card, played, in hand)'''
+
+        # obs 128-135
         # Adding the high cards in the player's hand
         matches = [ high_cards_set.index(card) for card in agent_trump_cards ]
-        obs[147 + np.array(matches)] = 1
+        obs[128 + np.array(matches)] = 1
+
+
+        '''Section e - opponents
+        For each opponent [x3]
+        Number of tricks bid
+        Number of tricks won
+        Trump cards played'''
+
+
+
+        # state['players_tricks_proposed'] = [player.proposed_tricks for player in self.players]
+        # state['players_tricks_won'] = [player.tricks_won for player in players]
+        # state['players_previously_played_cards'] = [player.played_cards for player in self.players]
+
 
         # obs 
         # Adding opponent specfic data, bid, trump cards played, tricks won
         for opponent_id in range(self.game.num_players):
             if opponent_id == current_player:
                 continue
+
+
+
 
         # obs 
         # Adding the cards plaued in the round data
