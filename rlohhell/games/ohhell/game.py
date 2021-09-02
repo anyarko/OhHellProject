@@ -139,8 +139,8 @@ class OhHellGame:
 
         state = self.round.get_state(self.players, player_id)
         state['current_player'] = self.round.current_player
-        state['trump_card'] = self.trump_card.get_index()
-        state['previously_played_cards'] = [c.get_index() for c in self.previously_played_cards]
+        state['trump_card'] = self.trump_card
+        state['previously_played_cards'] = self.previously_played_cards
         state['players_tricks_proposed'] = [player.proposed_tricks for player in self.players]
         state['players_previously_played_cards'] = [player.played_cards for player in self.players]
         return state

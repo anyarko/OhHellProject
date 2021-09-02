@@ -5,6 +5,7 @@ import random
 from collections import OrderedDict
 
 import rlohhell
+from gym.spaces import MultiBinary, Discrete
 from rlohhell.envs import Env
 from rlohhell.games.ohhell import Game
 from rlohhell.games.base import Card
@@ -25,8 +26,8 @@ class OhHellEnv2(gym.Env):
         self.action_recorder = []
         self.timestep = 0
 
-        self.observation_space = None
-        self.action_space = ACTION_SPACE
+        self.observation_space = gym.spaces.MultiBinary(350)
+        self.action_space = gym.spaces.Discrete(63)
 
         
         with open(os.path.join(rlohhell.__path__[0], 'games/ohhell/card2index.json'), 'r') as file:
@@ -60,31 +61,32 @@ class OhHellEnv2(gym.Env):
         '''
 
 
-        obs = np.zeros(356)
+        obs = np.zeros(350)
 
         current_player = state['current_player']
         hand = state['hand']
         bid = state['proposed_tricks']
         tricks_won =  state['tricks_won']
         num_cards_left = len(hand)
-        trump_suit = state['trump_card'][0]
+        trump_suit = state['trump_card'].suit
         agent_trump_cards = trumps_in_hand(hand, trump_suit)
         num_trump_cards = len(agent_trump_cards)
-        top_trump_cards = [ rank2int(card[1]) for card in agent_trump_cards if rank2int(card[1]) > 9 ]
-        high_cards = [ card for card in state['hand'] if rank2int(card[1]) > 12 ]
+        top_trump_cards = [ card for card in agent_trump_cards if rank2int(card.rank) > 9 ]
+        rank_top_trump_cards = [ rank2int(card.rank) for card in agent_trump_cards if rank2int(card.rank) > 9 ]
+        high_cards = [ card for card in state['hand'] if rank2int(card.rank) > 12 ]
         num_high_cards = len(high_cards)
-        idx1 = list(np.array([self.card2index[card] for card in state['hand']]) + 34)
-        idx2 = list(np.array([rank2int(card[1]) for card in agent_trump_cards]) + 109)
-        idx3 = list(np.array([self.card2index[card] for card in agent_trump_cards]) + 148)
-        high_cards_set = {'SA', 'SK', 'HA', 'HK', 'CA', 'CK', 'DA', 'DK'}
-        suits_set = {'S', 'H', 'D', 'C'}
+        idx1 = list(np.array([self.card2index[card.get_index()] for card in state['hand']]) + 34)
+        idx2 = list(np.array([rank2int(card.rank) for card in agent_trump_cards]) + 109)
+        idx3 = list(np.array([self.card2index[card.get_index()] for card in agent_trump_cards]) + 148)
+        high_cards_set = ('SA', 'SK', 'HA', 'HK', 'CA', 'CK', 'DA', 'DK')
+        suits_set = ('S', 'H', 'D', 'C')
         played_cards = state['played_cards']
         num_played_cards_round = len(played_cards)
         players_tricks_won = state['players_tricks_won']
         players_tricks_proposed = state['players_tricks_proposed']
         players_previously_played_cards = state['players_previously_played_cards'] 
         previously_played_cards = state['previously_played_cards']
-        idx5 = list(np.array([self.card2index[card] for card in previously_played_cards]) + 304)
+        idx5 = list(np.array([self.card2index[card.get_index()] for card in previously_played_cards]) + 298)
 
         # Encoding
 
@@ -101,8 +103,8 @@ class OhHellEnv2(gym.Env):
         
         # obs 10-14
         # Adding top trump cards in player's hand, cards greater than 9
-        if len(top_trump_cards) > 0:
-            obs[top_trump_cards] = 1
+        if len(rank_top_trump_cards) > 0:
+            obs[rank_top_trump_cards] = 1
 
         # obs 15-22
         # Adding the num of aces and kings in player's hand 
@@ -126,7 +128,7 @@ class OhHellEnv2(gym.Env):
         # obs 86-95
         # Adding the numnber of card left in the player's hand
         if num_cards_left > 0:
-            obs[96 - no_cards_left] = 1
+            obs[96 - num_cards_left] = 1
 
         # obs 96-99
         # Adding the position of the player in the game 
@@ -152,8 +154,9 @@ class OhHellEnv2(gym.Env):
 
         # obs 128-135
         # Adding the high cards in the player's hand
-        matches = [ high_cards_set.index(card) for card in agent_trump_cards ]
-        obs[128 + np.array(matches)] = 1
+        matches = 128 + np.array([ high_cards_set.index(card.get_index()) for card in high_cards ])
+        if len(matches) > 0:
+            obs[matches] = 1
 
 
         '''Section e - opponents
@@ -180,7 +183,7 @@ class OhHellEnv2(gym.Env):
             # obs 158-170
             # Adding the trumps played by the opponent
             opponents_played_trumps = trumps_in_hand(players_previously_played_cards[opponent_id], trump_suit)
-            idx4 = list(np.array([rank2int(card[1]) for card in opponents_played_trumps]) + start_encoding_here + 20))
+            idx4 = list(np.array([rank2int(card.rank) for card in opponents_played_trumps]) + start_encoding_here + 20)
             obs[idx4] = 1
             
             # Skipping to the next part of the obs vector for a new opponent encoding
@@ -192,19 +195,35 @@ class OhHellEnv2(gym.Env):
         The value and suits of up to the previous 3 hands
         Also determine whether card is the highest trump card or leading suit card played'''
 
-        # obs 241-303
+        # obs 241-297
         # Adding the cards played in the round
         if num_played_cards_round > 0:
+            card_1 = played_cards[0]
+            obs[239 + rank2int(card_1.rank)] = 1 
+            obs[254 + suits_set.index(card_1.suit)] = 1
+            if trump_suit == card_1.suit:
+                obs[258] = 1
+            obs[259] = 1
 
         if num_played_cards_round > 1:
+            card_2 = played_cards[1]
+            obs[258 + rank2int(card_2.rank)] = 1 
+            obs[273 + suits_set.index(card_2.suit)] = 1
+            if trump_suit == card_2.suit:
+                obs[277] = 1
 
         if num_played_cards_round > 2:
+            card_3 = played_cards[2]
+            obs[277 + rank2int(card_3.rank)] = 1 
+            obs[292 + suits_set.index(card_3.suit)] = 1
+            if trump_suit == card_3.suit:
+                obs[296] = 1
 
         
         '''Section g - used
         Cards used (in hand, trump card, played)'''
 
-        # obs 304-355
+        # obs 298-349
         # Adding all the card played so far in the game
         obs[idx5] = 1
             
@@ -212,22 +231,16 @@ class OhHellEnv2(gym.Env):
         
         return obs
 
-
-        
-
     
     def reset(self):
         ''' Start a new game
 
         Returns:
-            (tuple): Tuple containing:
-
-                (numpy.array): The begining state of the game
-                (int): The begining player
+            (numpy.array): The begining state of the game
         '''
         state, player_id = self.game.init_game()
         self.action_recorder = []
-        return self._extract_state(state), player_id
+        return self._extract_state(state)
 
 
     def _decode_action(self, action_id):
@@ -264,9 +277,22 @@ class OhHellEnv2(gym.Env):
         self.timestep += 1
         # Record the action for human interface
         self.action_recorder.append((self.get_player_id(), action))
+        
+        
+        current_tricks_won = self.game.players[self.get_player_id()].tricks_won
         next_state, player_id = self.game.step(action)
+        new_tricks_won = self.game.players[self.get_player_id()].tricks_won
+        reward = new_tricks_won - current_tricks_won
 
-        return self._extract_state(next_state), player_id
+        done = self.game.is_over()
+        info = {}
+
+        return self._extract_state(next_state), reward, done, info
+
+
+    def get_player_id(self):
+
+        return self.game.current_player
 
 
     def _get_legal_actions(self):
@@ -281,3 +307,8 @@ class OhHellEnv2(gym.Env):
         else:
             legal_ids = {ACTION_SPACE[str(action)]: None for action in legal_actions}
         return OrderedDict(legal_ids)
+
+
+# if __name__ == '__main__':
+#     env = OhHellEnv2()
+#     print(env._decode_action(62))

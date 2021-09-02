@@ -8,12 +8,12 @@ from rlohhell.envs.registration import register, make
 class TestRegistration(unittest.TestCase):
 
     def test_register(self):
-        register(env_id='test_reg', entry_point='rlohhell.envs.ohhell:OhHellEnv')
+        register(env_id='test_reg', entry_point='rlohhell.envs.ohhell:OhHellEnv2')
         with self.assertRaises(ValueError):
-            register(env_id='test_reg', entry_point='rlohhell.envs.ohhell:OhHellEnv')
+            register(env_id='test_reg', entry_point='rlohhell.envs.ohhell:OhHellEnv2')
 
     def test_make(self):
-        register(env_id='test_make', entry_point='rlohhell.envs.ohhell:OhHellEnv')
+        register(env_id='test_make', entry_point='rlohhell.envs.ohhell:OhHellEnv2')
         env = rlohhell.make('test_make')
         _, player = env.reset()
         # self.assertEqual(player, 0)
@@ -21,7 +21,7 @@ class TestRegistration(unittest.TestCase):
             make('test_random_make')
 
     def test_make_modes(self):
-        register(env_id='test_env', entry_point='rlohhell.envs.ohhell:OhHellEnv')
+        register(env_id='test_env', entry_point='rlohhell.envs.ohhell:OhHellEnv2')
 
 if __name__ == '__main__':
     unittest.main()

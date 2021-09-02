@@ -78,7 +78,7 @@ def cards2list(cards):
 
 def trumps_in_hand(hand, trump_suit):
     ''' Return an array of the trumps in a given list'''
-    trump_cards = [ card for card in hand if trump_suit == card[0] ]
+    trump_cards = [ card for card in hand if trump_suit == card.suit ]
     return trump_cards
 
 

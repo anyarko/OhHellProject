@@ -41,7 +41,7 @@ class Card:
         Returns:
             string: the combination of rank and suit of a card. Eg: AS, 5H, JD, 3C, ...
         '''
-        return self.rank + self.suit
+        return self.suit + self.rank
 
     def get_index(self):
         ''' Get index of a card.

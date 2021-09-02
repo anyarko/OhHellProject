@@ -27,7 +27,6 @@ class TestOhHellMethods(unittest.TestCase):
         game.step(1)
         game.step(2)
         actions = game.get_legal_actions()
-        print(actions)
         self.assertNotIn(6, actions)
         
     def test_step(self):
@@ -84,6 +83,19 @@ class TestOhHellMethods(unittest.TestCase):
         player = Player(0, np.random.RandomState())
         self.assertEqual(0, player.get_player_id())
 
+    def test_previously_played_cards(self):
+        game = Game()
+        game.init_game()
+        while not game.is_over():
+            actions = game.get_legal_actions()
+            action = random.choice(actions)
+            state, _ = game.step(action)
+        num_played_cards = len(game.previously_played_cards)
+        num_played_cards_player3 = len(game.players[2].played_cards)
+        self.assertEqual(num_played_cards, 40)
+        self.assertEqual(num_played_cards_player3, 10)  
     
 if __name__ == '__main__':
     unittest.main() 
+
+    

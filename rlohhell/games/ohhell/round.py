@@ -95,8 +95,8 @@ class OhHellRound:
             (dict): The state of the player
         '''
         state = {}
-        state['hand'] = [c.get_index() for c in players[player_id].hand]
-        state['played_cards'] = [c.get_index() for c in self.played_cards]
+        state['hand'] = players[player_id].hand
+        state['played_cards'] = self.played_cards
         state['proposed_tricks'] = players[player_id].proposed_tricks
         state['tricks_won'] = players[player_id].tricks_won
         state['players_tricks_won'] = [player.tricks_won for player in players]
