@@ -43,11 +43,12 @@ from rlohhell.games.ohhell.utils import ACTION_SPACE, ACTION_LIST, cards2list
     #         self.assertEqual(decoded, int(ACTION_LIST[legal_action]))
 
     # def test_step(self):
-    #     env = rlohhell.make('ohhell')
-    #     state, _ = env.reset()
-    #     action = random.choice(list(state['legal_actions']))
-    #     _, player_id = env.step(action)
-    #     self.assertEqual(player_id, env.game.round.current_player)
+    #     env = rlohhell.envs.ohhell.OhHellEnv2()
+    #     while env.game.is_over():
+    #         action = random.choice(list(state['legal_actions']))
+    #         obs, reward, done, info = env.step(action)
+    #         print(reward)
+            
 
     # def test_step_back(self):
     #     env = rlohhell.make('ohhell', config={'allow_step_back':True})
@@ -83,8 +84,14 @@ from rlohhell.games.ohhell.utils import ACTION_SPACE, ACTION_LIST, cards2list
     #     self.assertEqual(num_players, 3)
 
 if __name__ == '__main__':
-    from stable_baselines3.common.env_util import make_vec_env
+    # unittest.main()
     env = rlohhell.envs.ohhell.OhHellEnv2()
-    check_env(env)
-    
+    i=0
+    while not env.game.is_over():
+        legal_actions = env.game.get_legal_actions()
+        action = random.choice(legal_actions)
+        obs, reward, done, info = env.step(action)
+        print(reward)
+        i+=1
+    print(i)
     

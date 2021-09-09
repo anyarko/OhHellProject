@@ -279,10 +279,10 @@ class OhHellEnv2(gym.Env):
         self.action_recorder.append((self.get_player_id(), action))
         
         
-        current_tricks_won = self.game.players[self.get_player_id()].tricks_won
+        current_tricks_won = [ player.tricks_won for player in self.game.players ]
         next_state, player_id = self.game.step(action)
-        new_tricks_won = self.game.players[self.get_player_id()].tricks_won
-        reward = new_tricks_won - current_tricks_won
+        new_tricks_won = [ player.tricks_won for player in self.game.players ]
+        reward = np.array(new_tricks_won) - np.array(current_tricks_won)
 
         done = self.game.is_over()
         info = {}
@@ -311,4 +311,7 @@ class OhHellEnv2(gym.Env):
 
 # if __name__ == '__main__':
 #     env = OhHellEnv2()
-#     print(env._decode_action(62))
+#     for i in range(5):
+#         action = random.choice(env.game.get_legal_actions())
+#         print(list(env._get_legal_actions()))
+#         env.step(action)

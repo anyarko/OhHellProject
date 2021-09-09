@@ -119,7 +119,8 @@ class OhHellGame:
             self.round.played_cards = []
             self.round_counter += 1
 
-
+        if self.is_over():
+            final_tricks_won = self.get_payoffs()
 
 
         state = self.get_state(self.current_player)
