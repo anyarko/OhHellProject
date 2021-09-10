@@ -32,6 +32,10 @@ class OhHellEnv2(gym.Env):
         
         with open(os.path.join(rlohhell.__path__[0], 'games/ohhell/card2index.json'), 'r') as file:
             self.card2index = json.load(file)
+
+        
+        self.was_action_available = True
+
     
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
@@ -247,14 +251,18 @@ class OhHellEnv2(gym.Env):
         legal_ids = self._get_legal_actions()
         if self.game.round.players_proposed == self.game.num_players:
             if action_id in list(legal_ids):
+                self.was_action_available = True
                 return Card(ACTION_LIST[action_id][0], ACTION_LIST[action_id][1])
             else:
+                self.was_action_available = False
                 random_card = ACTION_LIST[random.choice(list(legal_ids))]
                 return Card(random_card[0], random_card[1])
         else:
             if action_id in list(legal_ids):
+                self.was_action_available = True
                 return int(ACTION_LIST[action_id])
             else:
+                self.was_action_available = False
                 return int(ACTION_LIST[random.choice(list(legal_ids))])
 
     
@@ -281,7 +289,13 @@ class OhHellEnv2(gym.Env):
         
         current_tricks_won = [ player.tricks_won for player in self.game.players ]
         next_state, player_id = self.game.step(action)
-        new_tricks_won = [ player.tricks_won for player in self.game.players ]
+        
+        if self.was_action_available:
+            new_tricks_won = [ player.tricks_won for player in self.game.players ]
+        else:
+            sub5 = lambda x: x-5
+            new_tricks_won = [ sub5(player.tricks_won) if player.get_player_id() == (self.game.current_player - 1) % 4  else player.tricks_won for player in self.game.players ]
+
         reward = np.array(new_tricks_won) - np.array(current_tricks_won)
 
         done = self.game.is_over()

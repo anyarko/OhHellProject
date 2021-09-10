@@ -7,6 +7,7 @@ import gym
 from stable_baselines3.common.env_checker import check_env
 from rlohhell.agents.random_agent import RandomAgent
 from rlohhell.games.ohhell.utils import ACTION_SPACE, ACTION_LIST, cards2list
+
 # from determism_util import is_deterministic
 
 # class TestOhHellEnv(unittest.TestCase):
@@ -86,12 +87,15 @@ from rlohhell.games.ohhell.utils import ACTION_SPACE, ACTION_LIST, cards2list
 if __name__ == '__main__':
     # unittest.main()
     env = rlohhell.envs.ohhell.OhHellEnv2()
+
+    check_env(env)
     i=0
-    while not env.game.is_over():
-        legal_actions = env.game.get_legal_actions()
-        action = random.choice(legal_actions)
-        obs, reward, done, info = env.step(action)
-        print(reward)
-        i+=1
-    print(i)
+    # while not env.game.is_over():
+    #     legal_actions = env.game.get_legal_actions()
+    #     print(legal_actions)
+    #     action = random.choice(legal_actions)
+    #     obs, reward, done, info = env.step(action)
+    #     print(reward)
+    #     i+=1
+    #     if i==25: break
     
