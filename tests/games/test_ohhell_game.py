@@ -4,6 +4,7 @@ import random
 
 from rlohhell.games.ohhell.game import OhHellGame as Game
 from rlohhell.games.ohhell.player import OhHellPlayer as Player
+from rlohhell.games.ohhell.round import OhHellRound as Round
 from rlohhell.games.ohhell.judger import OhHellJudger as Judger
 from rlohhell.games.ohhell.utils import ACTION_LIST, determine_winner, int2rank
 from rlohhell.games.base import Card
@@ -96,6 +97,30 @@ class TestOhHellMethods(unittest.TestCase):
         self.assertEqual(num_played_cards_player3, 10)  
     
 if __name__ == '__main__':
-    unittest.main() 
+    # unittest.main() 
+
+    game = Game()
+    game.init_game()
+    while not game.is_over():
+        
+        print(game.players[1].tricks_won)
+        print(len(game.previously_played_cards))
+
+        my_cards = game.players[game.current_player].hand
+        my_tricks = game.players[game.current_player].tricks_won
+        
+        cards_played = game.round.played_cards
+
+        
+        if isinstance():
+            legal_actions = game.get_legal_actions()
+            visible_cards = [ card.get_index() for card in legal_actions]
+            print(visible_cards)
+
+        
+        game.step(1)
+
+
+
 
     
