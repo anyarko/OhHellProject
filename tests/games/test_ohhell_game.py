@@ -107,12 +107,14 @@ if __name__ == '__main__':
         print(len(game.previously_played_cards))
 
         my_cards = game.players[game.current_player].hand
+        visible_hand = [card.get_index() for card in my_cards]
+        print(visible_hand)
         my_tricks = game.players[game.current_player].tricks_won
+        print(my_tricks)
         
         cards_played = game.round.played_cards
-
         
-        if isinstance():
+        if isinstance(game.get_legal_actions(), Card):
             legal_actions = game.get_legal_actions()
             visible_cards = [ card.get_index() for card in legal_actions]
             print(visible_cards)
