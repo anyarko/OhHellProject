@@ -1,0 +1,41 @@
+from rlohhell.games.ohhell.game import OhHellGame as Game
+from rlohhell.games.base import Card
+
+game = Game()
+game.init_game()
+
+my_cards = game.players[game.current_player].hand
+visible_hand = [card.get_index() for card in my_cards]
+print(visible_hand)
+
+game.step(1)
+my_tricks_proposed = game.players[(game.current_player-1) % 4].proposed_tricks
+print(my_tricks_proposed)
+
+
+game.step(4)
+game.step(3)
+game.step(3)
+
+
+legal_actions = game.get_legal_actions()
+visible_cards = [ card.get_index() for card in legal_actions]
+print(visible_cards)
+
+
+# One of the visible cards
+game.step(Card('H', '3'))
+
+
+# Play through this
+# At any point you can call something like game.played_cards to see if it is correct
+
+legal_actions = game.get_legal_actions()
+visible_cards = [ card.get_index() for card in legal_actions]
+print(visible_cards)
+
+
+# One of the visible cards
+game.step(Card('H', '3'))
+
+
