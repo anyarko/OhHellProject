@@ -153,18 +153,20 @@ def get_legal():
 def get_hand():
     my_cards = game.players[game.current_player].hand
     visible_hand = [card.get_index() for card in my_cards]
-    print("Current Hand: ", visible_hand)
+    print("Current Hand:  ", visible_hand)
     
 def get_trump():
     trump = game.trump_card
     trump_v = trump.get_index()
-    print("Trump Card: ",trump_v)
+    print("Trump Card:     [",trump_v,"]")
    
 # Quick rain-check
 def status():
+    print("\n")
     get_hand()
     get_legal()
     get_trump()
+    print("\n")
     
 # Step functions 
 def step(x):
