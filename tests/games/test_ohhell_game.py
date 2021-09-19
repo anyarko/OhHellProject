@@ -145,7 +145,7 @@ game.init_game()
 def get_legal():
     legal_actions = game.get_legal_actions()
     if isinstance(legal_actions[0], int):
-        print("Legal Options: ",legal_actions)
+        print("Bid tricks:    ",legal_actions)
     else:
         visible_legal = [card.get_index() for card in legal_actions]
         print("Legal Options: ",visible_legal)
@@ -169,9 +169,11 @@ def status():
     print("\n")
     
 # Step functions 
+# Bidding number of tricks
 def step(x):
     game.step(x)
     
+# Playing a card
 def step_c(x, y):
     game.step(Card(x,y))
     
