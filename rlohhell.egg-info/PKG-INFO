@@ -6,6 +6,10 @@ Home-page: https://github.com/LeLingu/OhHellProject/rlohhell
 Author: Team Warwick
 Author-email: albert.nyarko-agyei@warwick.ac.uk
 License: UNKNOWN
+Description: # Reinforcement Learning Project on OhHell
+        
+        Modifying the code from a project by DATA Lab at Texas A&M University (2019). That project created template environments and agents that allows the RL approach to be used some card games.  
+        
 Keywords: Reinforcement Learning,game,RL,AI
 Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3.9
@@ -16,10 +20,3 @@ Classifier: License :: OSI Approved :: MIT License
 Classifier: Operating System :: OS Independent
 Description-Content-Type: text/markdown
 Provides-Extra: torch
-License-File: LICENSE.md
-
-# Reinforcement Learning Project on OhHell
-
-Modifying the code from a project by DATA Lab at Texas A&M University (2019). That project created template environments and agents that allows the RL approach to be used some card games.  
-
-

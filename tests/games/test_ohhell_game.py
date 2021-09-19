@@ -129,15 +129,15 @@ if __name__ == '__main__':
         game.step(1)
 
 # The below code is for running the game in the shell
-# Import rlohhell with 'pip install -e .' in the folder with setup.py
-# Then run
-
+# Import rlohhell with 'pip install -e .' while in the folder with setup.py
+# type 'python'
+# Then run the below code
 
 from rlohhell.games.ohhell.player import OhHellPlayer as Player
 from rlohhell.games.ohhell.game import OhHellGame as Game
 from rlohhell.games.base import Card
 
-# Incomplete
+# Create function to get number of wins.
 
 game = Game()
 game.init_game()
@@ -145,23 +145,30 @@ game.init_game()
 def get_legal():
     legal_actions = game.get_legal_actions()
     if isinstance(legal_actions[0], int):
-        print(legal_actions)
+        print("Legal Options: ",legal_actions)
     else:
         visible_legal = [card.get_index() for card in legal_actions]
-        print(visible_legal)
+        print("Legal Options: ",visible_legal)
 
 def get_hand():
     my_cards = game.players[game.current_player].hand
     visible_hand = [card.get_index() for card in my_cards]
-    print(visible_hand)
-    
-def step(x):
-    game.step(x)
+    print("Current Hand: ", visible_hand)
     
 def get_trump():
     trump = game.trump_card
     trump_v = trump.get_index()
-    print(trump_v)
+    print("Trump Card: ",trump_v)
+   
+# Quick rain-check
+def status():
+    get_hand()
+    get_legal()
+    get_trump()
+    
+# Step functions 
+def step(x):
+    game.step(x)
     
 def step_c(x, y):
     game.step(Card(x,y))
