@@ -11,6 +11,7 @@ class OhHellPlayer:
         self.hand = []
         self.played_cards = []
         self.has_proposed = False
+        self.name = 'Trained'
 
         # The tricks that the player has proposed for the round
         self.proposed_tricks = 0

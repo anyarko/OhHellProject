@@ -3,17 +3,17 @@ import os
 import numpy as np
 import random
 from collections import OrderedDict
+from stable_baselines3 import PPO
 
 import rlohhell
-from gym.spaces import MultiBinary, Discrete
-from rlohhell.envs import Env
 from rlohhell.games.ohhell import Game
 from rlohhell.games.base import Card
 from rlohhell.games.ohhell.utils import ACTION_SPACE, ACTION_LIST, cards2list, trumps_in_hand
-from rlohhell.utils.utils import rank2int, int2rank
+from rlohhell.utils.utils import rank2int
 
 
 import gym
+import gym.spaces
 from gym.utils import seeding
 
 class OhHellEnv2(gym.Env):
@@ -35,6 +35,7 @@ class OhHellEnv2(gym.Env):
 
         
         self.was_action_available = True
+        self.trained_model = PPO.load('ppo_ohhell')
 
     
     def seed(self, seed=None):
@@ -282,25 +283,32 @@ class OhHellEnv2(gym.Env):
         if not raw_action:
             action = self._decode_action(action)
 
-        self.timestep += 1
-        # Record the action for human interface
-        self.action_recorder.append((self.get_player_id(), action))
+
+        while self.game.players[self.game.current_player].name != 'Training':
+            current_obs = self._extract_state(self.game.get_state(self.game.current_player))
+            fictitious_action, _states = self.trained_model.predict(current_obs)
+            fictitious_next_state, ficticious_player_id = self.game.step(self._decode_action(fictitious_action))
+
         
-        
-        current_tricks_won = [ player.tricks_won for player in self.game.players ]
+        training_agent = self.game.current_player
+        current_tricks_won = self.game.players[training_agent].tricks_won
+
+
+        hand = self.game.players[training_agent].hand
+        hand = [ card.get_index() for card in hand ]
+
+        print(action)
+        print(type(action))
+
         next_state, player_id = self.game.step(action)
+        new_tricks_won = self.game.players[training_agent].tricks_won
         
-        if self.was_action_available:
-            new_tricks_won = [ player.tricks_won for player in self.game.players ]
-        else:
-            sub5 = lambda x: x-5
-            new_tricks_won = [ sub5(player.tricks_won) if player.get_player_id() == (self.game.current_player - 1) % 4  else player.tricks_won for player in self.game.players ]
-
-        reward = np.array(new_tricks_won) - np.array(current_tricks_won)
-
+        reward = new_tricks_won - current_tricks_won
+        if not self.was_action_available:
+            reward = -10
         done = self.game.is_over()
         info = {}
-
+        
         return self._extract_state(next_state), reward, done, info
 
 

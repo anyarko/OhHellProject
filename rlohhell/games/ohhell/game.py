@@ -42,6 +42,8 @@ class OhHellGame:
         # Initilize four players to play the game
         self.players = [Player(i, self.np_random) for i in range(self.num_players)]
 
+        self.players[random.randint(0,3)].name = 'Training'
+
         # Initialize a judger class which will decide who wins in the end
         self.judger = Judger(self.np_random)
 
