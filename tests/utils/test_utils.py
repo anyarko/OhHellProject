@@ -2,7 +2,6 @@ import unittest
 import numpy as np
 from rlohhell.utils.utils import init_54_deck, init_standard_deck, rank2int, print_card, elegent_form, reorganize, tournament
 import rlohhell
-from rlohhell.agents.random_agent import RandomAgent
 
 class TestUtils(unittest.TestCase):
 

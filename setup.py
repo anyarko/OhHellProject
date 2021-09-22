@@ -4,7 +4,8 @@ with open("README.md", "r", encoding="utf8") as fh:
     long_description = fh.read()
 
 extras = {
-    'torch': ['torch', 'GitPython', 'gitdb2', 'matplotlib'],
+    'torch': ['torch', 'GitPython', 'gitdb2', 'matplotlib', 
+        'stable_baselines3'],
 }
 
 def _get_version():
@@ -30,13 +31,7 @@ setuptools.setup(
     keywords=["Reinforcement Learning", "game", "RL", "AI"],
     packages=setuptools.find_packages(exclude=('tests',)),
     package_data={
-        'rlohhell': ['models/pretrained/leduc_holdem_cfr/*',
-                   'games/uno/jsondata/action_space.json',
-                   'games/limitholdem/card2index.json',
-                   'games/leducholdem/card2index.json',
-                   'games/doudizhu/jsondata.zip',
-                   'games/uno/jsondata/*',
-                   'games/ohhell/jsondata/*',
+        'rlohhell': ['games/ohhell/jsondata/*',
                    'games/ohhell/card2index.json'
                    ]},
     install_requires=[
