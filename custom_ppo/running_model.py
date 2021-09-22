@@ -9,23 +9,22 @@ from rlohhell.envs.ohhell import OhHellEnv2
 
 env = OhHellEnv2()
 # check_env(env)
-# env = make_vec_env(OhHellEnv2)
+env = make_vec_env(OhHellEnv2)
 
-# policy_kwargs = dict(activation_fn=th.nn.ReLU,
-#                      net_arch=[350, dict(pi=[350, 63], vf=[350,100])])
+policy_kwargs = dict(activation_fn=th.nn.ReLU,
+                     net_arch=[700, dict(pi=[350, 63], vf=[350,100])])
 
-# model = PPO('MlpPolicy', env, policy_kwargs=policy_kwargs, tensorboard_log="./tmp/", verbose=1)
-# model.learn(total_timesteps=1000000)
+model = PPO('MlpPolicy', env, policy_kwargs=policy_kwargs, tensorboard_log="./tmp/", verbose=1)
 
-
-# model.save("ppo_ohhell")
+model.learn(total_timesteps=1000000)
+model.save("ppo_ohhell_700_350")
 
 
 #  Using the model
-model = PPO.load("ppo_ohhell")
-obs = env.reset()
-for _ in range(11):
-    action, _states = model.predict(obs)
-    print(env._decode_action(action))
-    obs, reward, dones, info = env.step(action)
-    print(reward)
+# model = PPO.load("ppo_ohhell")
+# obs = env.reset()
+# for _ in range(11):
+#     action, _states = model.predict(obs)
+#     print(env._decode_action(action))
+#     obs, reward, dones, info = env.step(action)
+#     print(reward)

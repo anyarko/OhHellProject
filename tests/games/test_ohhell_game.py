@@ -97,36 +97,8 @@ class TestOhHellMethods(unittest.TestCase):
         self.assertEqual(num_played_cards_player3, 10)  
     
 if __name__ == '__main__':
-    # unittest.main() 
+    unittest.main() 
 
-    game = Game()
-    game.init_game()
-    while not game.is_over():
-        
-        print(game.players[1].tricks_won)
-        print(len(game.previously_played_cards))
-
-        my_cards = game.players[game.current_player].hand
-        visible_hand = [card.get_index() for card in my_cards]
-        print(visible_hand)
-        my_tricks = game.players[game.current_player].tricks_won
-        print(my_tricks)
-        
-        legal_actions = game.get_legal_actions()
-        visible_legal = [card.get_index() for card in legal_actions]
-        visible_legal = [card.get_index() for card in legal_actions]
-        
-        print(visible_legal)
-        
-        cards_played = game.round.played_cards
-        
-        if isinstance(game.get_legal_actions(), Card()):
-            legal_actions = game.get_legal_actions()
-            visible_cards = [card.get_index() for card in legal_actions]
-            print(visible_cards)
-
-        
-        game.step(1)
 
 # The below code is for running the game in the shell
 # Import rlohhell with 'pip install -e .' while in the folder with setup.py

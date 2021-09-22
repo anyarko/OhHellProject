@@ -8,7 +8,7 @@ from stable_baselines3 import PPO
 import rlohhell
 from rlohhell.games.ohhell import Game
 from rlohhell.games.base import Card
-from rlohhell.games.ohhell.utils import ACTION_SPACE, ACTION_LIST, cards2list, trumps_in_hand
+from rlohhell.games.ohhell.utils import ACTION_SPACE, ACTION_LIST, trumps_in_hand
 from rlohhell.utils.utils import rank2int
 
 
@@ -35,7 +35,12 @@ class OhHellEnv2(gym.Env):
 
         
         self.was_action_available = True
+
+        '''A previously trained model that predicts based of the obs returned by step
+            Necessary so that the game can be play fictitiously
+        '''
         self.trained_model = PPO.load('ppo_ohhell')
+
 
     
     def seed(self, seed=None):
@@ -45,7 +50,7 @@ class OhHellEnv2(gym.Env):
     
     def _extract_state(self, state):
 
-        ''' get_state(player_id) is called on game and returns a dictonary with
+        ''' get_state(player_id) is called on game() and returns a dictonary with
 
         state['hand'] = [c.get_index() for c in players[player_id].hand]
         state['played_cards'] = [c.get_index() for c in self.played_cards]
@@ -60,9 +65,7 @@ class OhHellEnv2(gym.Env):
         state['players_previously_played_cards'] = [player.played_cards for player in self.players]
 
 
-        get_index returns suit+rank for the card for instance S2 or SA 
-
-        we can encode the information from this and return an extracted state, the previous version is above for tips.
+        Note. get_index() returns suit+rank for the card for instance S2 or SA 
         '''
 
 
@@ -240,14 +243,30 @@ class OhHellEnv2(gym.Env):
         ''' Start a new game
 
         Returns:
-            (numpy.array): The begining state of the game
+            (numpy.array): The begining state of the agent
         '''
-        state, player_id = self.game.init_game()
+        state, _ = self.game.init_game()
+
+        while self.game.players[self.game.current_player].name != 'Training':
+            current_obs = self._extract_state(self.game.get_state(self.game.current_player))
+            fictitious_action, _ = self.trained_model.predict(current_obs)
+            state, _ = self.game.step(self._decode_action(fictitious_action))
+
         self.action_recorder = []
         return self._extract_state(state)
 
 
     def _decode_action(self, action_id):
+        ''' Converts an action_id into an actual possible action
+        This function also records if the action was actual available or a random one had to be chosen inplace
+        
+        Args:
+            action_id (int): The action from action space
+            
+        Returns:
+            (Card/int): The Card to be played or tricks to be bid
+        '''
+
         legal_ids = self._get_legal_actions()
         action_id = int(action_id)
         if self.game.round.players_proposed == self.game.num_players:
@@ -271,44 +290,48 @@ class OhHellEnv2(gym.Env):
         ''' Step forward
 
         Args:
-            action (int): The action taken by the current player
+            action (int): The action to be taken by the agent player
             raw_action (boolean): True if the action is a raw action
 
         Returns:
-            (tuple): Tuple containing:
-
-                (dict): The next state
-                (int): The ID of the next player
+            obs (numpy.array): The next observation by the agent
+            reward (int): The reward from the last action
+            done (bool): If the game is done
+            info (dict): Extra info if needed
         '''
+
 
         while self.game.players[self.game.current_player].name != 'Training':
             current_obs = self._extract_state(self.game.get_state(self.game.current_player))
-            fictitious_action, _states = self.trained_model.predict(current_obs)
-            fictitious_next_state, ficticious_player_id = self.game.step(self._decode_action(fictitious_action))
+            fictitious_action, _ = self.trained_model.predict(current_obs)
+            _, _ = self.game.step(self._decode_action(fictitious_action))
         
         if not raw_action:
             action = self._decode_action(action)
         
         training_agent = self.game.current_player
         current_tricks_won = self.game.players[training_agent].tricks_won
-        next_state, player_id = self.game.step(action)
-        new_tricks_won = self.game.players[training_agent].tricks_won
+        next_state, _ = self.game.step(action)
 
         agent_action_was_available = self.was_action_available
 
         while self.game.players[self.game.current_player].name != 'Training' and not self.game.is_over():
             current_obs = self._extract_state(self.game.get_state(self.game.current_player))
-            fictitious_action, _states = self.trained_model.predict(current_obs)
-            next_state, player_id = self.game.step(self._decode_action(fictitious_action))
+            fictitious_action, _ = self.trained_model.predict(current_obs)
+            next_state, _ = self.game.step(self._decode_action(fictitious_action))
    
+        
+        new_tricks_won = self.game.players[training_agent].tricks_won
+        
         reward = new_tricks_won - current_tricks_won
         if not agent_action_was_available:
             reward = -10
 
         done = self.game.is_over()
         info = {}
+        obs = self._extract_state(next_state)
         
-        return self._extract_state(next_state), reward, done, info
+        return obs, reward, done, info
 
 
     def get_player_id(self):
@@ -328,11 +351,3 @@ class OhHellEnv2(gym.Env):
         else:
             legal_ids = {ACTION_SPACE[str(action)]: None for action in legal_actions}
         return OrderedDict(legal_ids)
-
-
-if __name__ == '__main__':
-    env = OhHellEnv2()
-    for i in range(5):
-        # print(list(env._get_legal_actions()))
-        action = random.choice(list(env._get_legal_actions()))
-        env.step(action)
