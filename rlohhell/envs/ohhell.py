@@ -76,7 +76,6 @@ class OhHellEnv2(gym.Env):
         trump_suit = state['trump_card'].suit
         agent_trump_cards = trumps_in_hand(hand, trump_suit)
         num_trump_cards = len(agent_trump_cards)
-        top_trump_cards = [ card for card in agent_trump_cards if rank2int(card.rank) > 9 ]
         rank_top_trump_cards = [ rank2int(card.rank) for card in agent_trump_cards if rank2int(card.rank) > 9 ]
         high_cards = [ card for card in state['hand'] if rank2int(card.rank) > 12 ]
         num_high_cards = len(high_cards)
@@ -250,6 +249,7 @@ class OhHellEnv2(gym.Env):
 
     def _decode_action(self, action_id):
         legal_ids = self._get_legal_actions()
+        action_id = int(action_id)
         if self.game.round.players_proposed == self.game.num_players:
             if action_id in list(legal_ids):
                 self.was_action_available = True
@@ -280,32 +280,31 @@ class OhHellEnv2(gym.Env):
                 (dict): The next state
                 (int): The ID of the next player
         '''
-        if not raw_action:
-            action = self._decode_action(action)
-
 
         while self.game.players[self.game.current_player].name != 'Training':
             current_obs = self._extract_state(self.game.get_state(self.game.current_player))
             fictitious_action, _states = self.trained_model.predict(current_obs)
             fictitious_next_state, ficticious_player_id = self.game.step(self._decode_action(fictitious_action))
-
+        
+        if not raw_action:
+            action = self._decode_action(action)
         
         training_agent = self.game.current_player
         current_tricks_won = self.game.players[training_agent].tricks_won
-
-
-        hand = self.game.players[training_agent].hand
-        hand = [ card.get_index() for card in hand ]
-
-        print(action)
-        print(type(action))
-
         next_state, player_id = self.game.step(action)
         new_tricks_won = self.game.players[training_agent].tricks_won
-        
+
+        agent_action_was_available = self.was_action_available
+
+        while self.game.players[self.game.current_player].name != 'Training' and not self.game.is_over():
+            current_obs = self._extract_state(self.game.get_state(self.game.current_player))
+            fictitious_action, _states = self.trained_model.predict(current_obs)
+            next_state, player_id = self.game.step(self._decode_action(fictitious_action))
+   
         reward = new_tricks_won - current_tricks_won
-        if not self.was_action_available:
+        if not agent_action_was_available:
             reward = -10
+
         done = self.game.is_over()
         info = {}
         
@@ -331,9 +330,9 @@ class OhHellEnv2(gym.Env):
         return OrderedDict(legal_ids)
 
 
-# if __name__ == '__main__':
-#     env = OhHellEnv2()
-#     for i in range(5):
-#         action = random.choice(env.game.get_legal_actions())
-#         print(list(env._get_legal_actions()))
-#         env.step(action)
+if __name__ == '__main__':
+    env = OhHellEnv2()
+    for i in range(5):
+        # print(list(env._get_legal_actions()))
+        action = random.choice(list(env._get_legal_actions()))
+        env.step(action)
