@@ -41,7 +41,6 @@ class OhHellEnv2(gym.Env):
         '''
         self.trained_model = PPO.load('ppo_ohhell')
 
-
     
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
