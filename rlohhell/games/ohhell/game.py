@@ -142,6 +142,10 @@ class OhHellGame:
 
         state = self.round.get_state(self.players, player_id)
         state['current_player'] = self.round.current_player
+        message = 'The round current player and env current player are not the same!'
+        assert player_id == state['current_player'], message
+        state['last_winner'] = self.round.last_winner
+        state['has_proposed'] = self.players[self.round.current_player].has_proposed
         state['trump_card'] = self.trump_card
         state['previously_played_cards'] = self.previously_played_cards
         state['players_tricks_proposed'] = [player.proposed_tricks for player in self.players]

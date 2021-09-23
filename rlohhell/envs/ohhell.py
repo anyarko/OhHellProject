@@ -58,6 +58,8 @@ class OhHellEnv2(gym.Env):
         state['players_tricks_won'] = [player.tricks_won for player in players]
         state['legal_actions'] = self.get_legal_actions(players, player_id) 
         state['current_player'] = self.round.current_player
+        state['last_winner'] = self.round.last_winner
+        state['has_proposed'] = self.players[self.round.current_player].has_proposed
         state['trump_card'] = self.trump_card.get_index()
         state['previously_played_cards'] = [c.get_index() for c in self.previously_played_cards]
         state['players_tricks_proposed'] = [player.proposed_tricks for player in self.players]
@@ -83,16 +85,16 @@ class OhHellEnv2(gym.Env):
         num_high_cards = len(high_cards)
         idx1 = list(np.array([self.card2index[card.get_index()] for card in state['hand']]) + 34)
         idx2 = list(np.array([rank2int(card.rank) for card in agent_trump_cards]) + 109)
-        idx3 = list(np.array([self.card2index[card.get_index()] for card in agent_trump_cards]) + 148)
         high_cards_set = ('SA', 'SK', 'HA', 'HK', 'CA', 'CK', 'DA', 'DK')
         suits_set = ('S', 'H', 'D', 'C')
         played_cards = state['played_cards']
         num_played_cards_round = len(played_cards)
+        position = (current_player - state['last_winner']) % 4
         players_tricks_won = state['players_tricks_won']
         players_tricks_proposed = state['players_tricks_proposed']
         players_previously_played_cards = state['players_previously_played_cards'] 
         previously_played_cards = state['previously_played_cards']
-        idx5 = list(np.array([self.card2index[card.get_index()] for card in previously_played_cards]) + 298)
+        idx3 = list(np.array([self.card2index[card.get_index()] for card in previously_played_cards]) + 298)
 
         # Encoding
 
@@ -119,12 +121,13 @@ class OhHellEnv2(gym.Env):
 
         # obs 23-33
         # Adding the player's estimate of tricks to win
-        obs[23 + bid] = 1
+        if state['has_proposed']:
+            obs[23 + bid] = 1
 
         '''Section b - agent
         Map the agents cards
         Number of cards agent has played
-        Agents position relative to the first hand
+        Agents position relative to the first player
         Number of tricks the agent has won'''
 
         # obs 34-85
@@ -137,8 +140,8 @@ class OhHellEnv2(gym.Env):
             obs[96 - num_cards_left] = 1
 
         # obs 96-99
-        # Adding the position of the player in the game 
-        obs[96 + num_played_cards_round] = 1
+        # Adding the position of the player in the round 
+        obs[96 + position] = 1
 
         # obs 100-110
         # Adding tricks won by player
@@ -231,7 +234,7 @@ class OhHellEnv2(gym.Env):
 
         # obs 298-349
         # Adding all the card played so far in the game
-        obs[idx5] = 1
+        obs[idx3] = 1
             
 
         

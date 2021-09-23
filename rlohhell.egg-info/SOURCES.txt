@@ -27,5 +27,4 @@ tests/envs/test_ohhell_env.py
 tests/games/__init__.py
 tests/games/test_ohhell_game.py
 tests/utils/__init__.py
-tests/utils/test_logger.py
 tests/utils/test_utils.py

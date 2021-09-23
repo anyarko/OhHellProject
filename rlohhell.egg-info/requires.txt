@@ -6,3 +6,4 @@ torch
 GitPython
 gitdb2
 matplotlib
+stable_baselines3
