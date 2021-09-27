@@ -4,6 +4,7 @@ import numpy as np
 import random
 from collections import OrderedDict
 from stable_baselines3 import PPO
+import math
 
 import rlohhell
 from rlohhell.games.ohhell import Game
@@ -322,13 +323,13 @@ class OhHellEnv2(gym.Env):
             fictitious_action, _ = self.trained_model.predict(current_obs)
             next_state, _ = self.game.step(self._decode_action(fictitious_action))
    
+
         
         new_tricks_won = self.game.players[training_agent].tricks_won
         
         reward = new_tricks_won - current_tricks_won
         if not agent_action_was_available:
-            reward = -10
-
+            reward = -1/math.pi
         done = self.game.is_over()
         info = {}
         obs = self._extract_state(next_state)
@@ -353,3 +354,9 @@ class OhHellEnv2(gym.Env):
         else:
             legal_ids = {ACTION_SPACE[str(action)]: None for action in legal_actions}
         return OrderedDict(legal_ids)
+
+
+if __name__ == '__main__':
+
+    env = OhHellEnv2()
+    obs = env.reset()
