@@ -10,7 +10,7 @@ from rlohhell.envs.ohhell import OhHellEnv2
 env = OhHellEnv2()
 
 # Using the model
-model = PPO.load("best_model1.zip")
+model = PPO.load("123")
 obs = env.reset()
 total_reward = 0
 times_illegal_action = 0

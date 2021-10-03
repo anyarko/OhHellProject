@@ -15,18 +15,28 @@ class OhHellRound:
         Args:
             round_number (int): The round number hence the max number of tricks 
             num_players (int): The number of players
-            played_cards (list): The list of the cards played in the round
-            trump_card (list): the card that upgrades the suit of the same kind
+            dealer (object): a custom object to deal cards to players
+            last_winner (int): the winner of the last round and hence the starter
+            current_player (int): the unique id of the current player
         '''
         self.np_random = np_random
         self.dealer = dealer
+
+        # The list of cards played in the round so far
         self.played_cards = []
+
+        # The card that determines the most powerful suit in the round
         self.trump_card = None
+
         self.round_number = round_number
         self.num_players = num_players
         self.last_winner = last_winner
         self.current_player = current_player
+
+        # Array tracking the bids
         self.proposed_tricks = [0 for _ in range(self.num_players)]
+
+        # The number of players that have bid so far
         self.players_proposed = 0
 
 
@@ -41,6 +51,7 @@ class OhHellRound:
         if action not in legal_actions:
             raise Exception('{} is not legal action. Legal actions: {}'.format(action, legal_actions))
         
+        # IF the action was a number it is treated a bid otherwise as a Card
         if isinstance(action, int):
             players[self.current_player].proposed_tricks = action
             self.proposed_tricks[self.current_player] = action
@@ -56,10 +67,13 @@ class OhHellRound:
         return self.current_player
 
     
-    
+    # Gets the avaiable actions of a player usually the current one
     def get_legal_actions(self, players, player_id):
         ''' Returns the list of actions possible for the player
         '''
+
+        # OhHell doesn't allow the total tricks bid to equal the number of card deal to each player
+        # this affects the last bidder's actions
         if players[player_id].has_proposed == False:
             full_list = list(range(0, self.round_number+1))
             if self.players_proposed == self.num_players - 1:
@@ -72,6 +86,7 @@ class OhHellRound:
 
         full_list = players[player_id].hand
 
+        # If the player has proposed then available actions are a subset of the player's hand
         if player_id == self.last_winner:
             return full_list
         else:
@@ -94,6 +109,8 @@ class OhHellRound:
         Returns:
             (dict): The state of the player
         '''
+
+        # The details to be encoded from the round
         state = {}
         state['hand'] = players[player_id].hand
         state['played_cards'] = self.played_cards

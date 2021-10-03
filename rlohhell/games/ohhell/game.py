@@ -122,6 +122,7 @@ class OhHellGame:
             self.round_counter += 1
 
         if self.is_over():
+            # get_payoffs() adds 10 to the tricks won if a player matched their bet
             final_tricks_won = self.get_payoffs()
 
 
@@ -142,8 +143,12 @@ class OhHellGame:
 
         state = self.round.get_state(self.players, player_id)
         state['current_player'] = self.round.current_player
+        state['wrong_actions_chosen'] = self.players[player_id].wrong_actions_chosen
+        
+        # The game and round classes share a lot of repeat variable that must be synchronised
         message = 'The round current player and env current player are not the same!'
         assert player_id == state['current_player'], message
+        
         state['last_winner'] = self.round.last_winner
         state['has_proposed'] = self.players[self.round.current_player].has_proposed
         state['trump_card'] = self.trump_card

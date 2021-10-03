@@ -3,7 +3,7 @@ from rlohhell.utils.utils import init_standard_deck
 class OhHellDealer:
 
     def __init__(self, np_random):
-        ''' Initialize a limitholdem dealer class
+        ''' Initialize a ohhell dealer class
         '''
         self.np_random = np_random
         self.deck = init_standard_deck()

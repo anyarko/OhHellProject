@@ -9,10 +9,9 @@ class OhHellJudger:
         self.np_random = np_random
 
     def judge_round(self, played_cards, trump_card):
-        ''' Return the winner of the game
+        ''' Returns the position of winner of the round relative to the first card player
 
         Args:
-            players (list): The list of players who play the game
             played_cards (list): The list of cards played
             trump_card (card): The trump card for the game
         '''

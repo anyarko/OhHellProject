@@ -27,7 +27,7 @@ class OhHellEnv2(gym.Env):
         self.action_recorder = []
         self.timestep = 0
 
-        self.observation_space = gym.spaces.MultiBinary(350)
+        self.observation_space = gym.spaces.MultiBinary(362)
         self.action_space = gym.spaces.Discrete(63)
 
         
@@ -54,6 +54,7 @@ class OhHellEnv2(gym.Env):
 
         state['hand'] = [c.get_index() for c in players[player_id].hand]
         state['played_cards'] = [c.get_index() for c in self.played_cards]
+        state['wrong_actions_chosen'] = self.players[player_id].wrong_actions_chosen
         state['proposed_tricks'] = players[player_id].proposed_tricks
         state['tricks_won'] = players[player_id].tricks_won
         state['players_tricks_won'] = [player.tricks_won for player in players]
@@ -71,12 +72,13 @@ class OhHellEnv2(gym.Env):
         '''
 
 
-        obs = np.zeros(350)
+        obs = np.zeros(362)
 
         current_player = state['current_player']
         hand = state['hand']
         bid = state['proposed_tricks']
         tricks_won =  state['tricks_won']
+        wrong_actions_chosen = state['wrong_actions_chosen'] 
         num_cards_left = len(hand)
         trump_suit = state['trump_card'].suit
         agent_trump_cards = trumps_in_hand(hand, trump_suit)
@@ -236,7 +238,10 @@ class OhHellEnv2(gym.Env):
         # obs 298-349
         # Adding all the card played so far in the game
         obs[idx3] = 1
-            
+
+        # obs 350-361
+        # Adding the num of times an invalid action was chosen
+        obs[350 + wrong_actions_chosen] = 1  
 
         
         return obs
@@ -254,6 +259,8 @@ class OhHellEnv2(gym.Env):
             current_obs = self._extract_state(self.game.get_state(self.game.current_player))
             fictitious_action, _ = self.trained_model.predict(current_obs)
             state, _ = self.game.step(self._decode_action(fictitious_action))
+            # a = random.choice(self.game.get_legal_actions())
+            # _,_ = self.game.step(a)
 
         self.action_recorder = []
         return self._extract_state(state)
@@ -278,6 +285,7 @@ class OhHellEnv2(gym.Env):
                 return Card(ACTION_LIST[action_id][0], ACTION_LIST[action_id][1])
             else:
                 self.was_action_available = False
+                self.game.players[self.game.current_player].wrong_actions_chosen += 1
                 random_card = ACTION_LIST[random.choice(list(legal_ids))]
                 return Card(random_card[0], random_card[1])
         else:
@@ -286,6 +294,7 @@ class OhHellEnv2(gym.Env):
                 return int(ACTION_LIST[action_id])
             else:
                 self.was_action_available = False
+                self.game.players[self.game.current_player].wrong_actions_chosen += 1
                 return int(ACTION_LIST[random.choice(list(legal_ids))])
 
     
@@ -308,6 +317,8 @@ class OhHellEnv2(gym.Env):
             current_obs = self._extract_state(self.game.get_state(self.game.current_player))
             fictitious_action, _ = self.trained_model.predict(current_obs)
             _, _ = self.game.step(self._decode_action(fictitious_action))
+            # a = random.choice(self.game.get_legal_actions())
+            # _,_ = self.game.step(a)
         
         if not raw_action:
             action = self._decode_action(action)
@@ -322,6 +333,8 @@ class OhHellEnv2(gym.Env):
             current_obs = self._extract_state(self.game.get_state(self.game.current_player))
             fictitious_action, _ = self.trained_model.predict(current_obs)
             next_state, _ = self.game.step(self._decode_action(fictitious_action))
+            # a = random.choice(self.game.get_legal_actions())
+            # _,_ = self.game.step(a)
    
 
         
@@ -329,7 +342,7 @@ class OhHellEnv2(gym.Env):
         
         reward = new_tricks_won - current_tricks_won
         if not agent_action_was_available:
-            reward = -1/math.pi
+            reward = -1
         done = self.game.is_over()
         info = {}
         obs = self._extract_state(next_state)
