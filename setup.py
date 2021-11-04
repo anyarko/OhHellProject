@@ -22,9 +22,9 @@ VERSION = _get_version()
 setuptools.setup(
     name="rlohhell",
     version=VERSION,
-    author="Team Warwick",
-    author_email="albert.nyarko-agyei@warwick.ac.uk",
-    description="An extension to RLcard",
+    author="WDS",
+    author_email="ppxan4@nottingham.ac.uk",
+    description="A NFSP approach to solving Oh Hell",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/LeLingu/OhHellProject/rlohhell",
