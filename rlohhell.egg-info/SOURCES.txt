@@ -1,4 +1,3 @@
-LICENSE.md
 README.md
 setup.py
 rlohhell/__init__.py
